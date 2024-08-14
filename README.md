@@ -1,4 +1,4 @@
-# hub-and-spoke-azure-dns-operator
+# hub-and-spoke-dns-operator
 
 ![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
 
@@ -30,13 +30,13 @@ graph TD
 
 ## Helm-chart Description
 
-A Helm chart for the Hub and Spoke Azure Kubernetes DNS Operator
+A Helm chart for the Hub and Spoke DNS Kubernetes DNS Operator
 
 ## Maintainers
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Marcus Aleksandravicius | <marcus1aleksand@gmail.com> | <https://github.com/marcus1aleksand> |
+| Marcus Aleks | <marcus@aleksand.com> | <https://github.com/marcus1aleksand> |
 
 ## Values
 
@@ -182,7 +182,7 @@ string
 			<td>
 				<div style="max-width: 300px;">
 <pre lang="json">
-"docker.cloudsmith.io/opennms/docker-private/dnsoperator"
+"ghcr.io/marcus1aleksand/hub-and-spoke-dns-operator"
 </pre>
 </div>
 			</td>
@@ -196,7 +196,7 @@ string
 			<td>
 				<div style="max-width: 300px;">
 <pre lang="json">
-"image-credentials"
+""
 </pre>
 </div>
 			</td>

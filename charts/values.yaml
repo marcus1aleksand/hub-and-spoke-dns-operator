@@ -1,5 +1,5 @@
 image:
-  repository: ghcr.io/marcus1aleksand/hub-and-spoke-azure-dns-operator
+  repository: ghcr.io/marcus1aleksand/hub-and-spoke-dns-operator
   pullPolicy: Always
 imageCredentials: ""
 nameOverride: ""
