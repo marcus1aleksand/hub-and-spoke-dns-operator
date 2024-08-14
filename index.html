@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+
+<html data-bs-theme="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="None" name="description"/>
+<link href="img/favicon.ico" rel="shortcut icon"/>
+<title>Azure Hub and Spoke DNS Operator</title>
+<link href="css/bootstrap.min.css" rel="stylesheet"/>
+<link href="css/fontawesome.min.css" rel="stylesheet"/>
+<link href="css/brands.min.css" rel="stylesheet"/>
+<link href="css/solid.min.css" rel="stylesheet"/>
+<link href="css/v4-font-face.min.css" rel="stylesheet"/>
+<link href="css/base.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" id="hljs-light" rel="stylesheet"/>
+<link disabled="" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" id="hljs-dark" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="homepage">
+<div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+<div class="container">
+<a class="navbar-brand" href=".">Azure Hub and Spoke DNS Operator</a>
+<!-- Expanded navigation -->
+<div class="navbar-collapse collapse" id="navbar-collapse">
+<ul class="nav navbar-nav ms-md-auto">
+<li class="nav-item">
+<a class="nav-link" data-bs-target="#mkdocs_search_modal" data-bs-toggle="modal" href="#">
+<i class="fa fa-search"></i> Search
+                            </a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+<div class="navbar-header">
+<button class="navbar-toggler collapsed" data-bs-target="#toc-collapse" data-bs-toggle="collapse" title="Table of Contents" type="button">
+<span class="fa fa-angle-down"></span>
+</button>
+</div>
+<div class="navbar-collapse collapse card bg-body-tertiary" id="toc-collapse">
+<ul class="nav flex-column">
+<li class="nav-item" data-bs-level="1"><a class="nav-link" href="#hub-and-spoke-azure-dns-operator">hub-and-spoke-azure-dns-operator</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-bs-level="2"><a class="nav-link" href="#helm-chart-description">Helm-chart Description</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-bs-level="2"><a class="nav-link" href="#maintainers">Maintainers</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-bs-level="2"><a class="nav-link" href="#values">Values</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-bs-level="2"><a class="nav-link" href="#security-checks">Security Checks</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-bs-level="2"><a class="nav-link" href="#validation-hooks">Validation Hooks</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div></div>
+<div class="col-md-9" role="main">
+<h1 id="hub-and-spoke-azure-dns-operator">hub-and-spoke-azure-dns-operator</h1>
+<p><img alt="Version: 0.0.1" src="https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square"/> <img alt="Type: application" src="https://img.shields.io/badge/Type-application-informational?style=flat-square"/> <img alt="AppVersion: 0.0.1" src="https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square"/></p>
+<p>The Azure Hub and Spoke DNS Operator is an event-based DNS record operator tool designed for a specific use case within Kubernetes environments. It manages Kubernetes influxes fronted by a firewall in a Hub Network and having NAT rules to direct traffic to Kubernetes Influxes in a Spoke Network.</p>
+<p>This operator monitors Kubernetes events for Ingress resource creation, updates, or deletion and then creates a Type A DNS record in the target DNS zone. It can set the IP associated with the Ingress resource or a "customIP" parameter defined in the helm chart provided with this operator.</p>
+<div class="mermaid">graph TD
+    A[User] --&gt; B[Firewall&lt;br&gt;Public IP NAT]
+    B --&gt; C[Hub Network]
+    C --&gt; D[Spoke Network 1]
+    C --&gt; E[Spoke Network 2]
+    D --&gt; F[Kubernetes Cluster 1]
+    E --&gt; G[Kubernetes Cluster 2]
+    F --&gt; H[Ingress 1]
+    G --&gt; I[Ingress 2]
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#ccf,stroke:#333,stroke-width:2px
+    style C fill:#ccf,stroke:#333,stroke-width:2px
+    style D fill:#ccf,stroke:#333,stroke-width:2px
+    style E fill:#ccf,stroke:#333,stroke-width:2px
+    style F fill:#ffc,stroke:#333,stroke-width:2px
+    style G fill:#ffc,stroke:#333,stroke-width:2px
+    style H fill:#ffc,stroke:#333,stroke-width:2px
+    style I fill:#ffc,stroke:#333,stroke-width:2px
+</div>
+<h2 id="helm-chart-description">Helm-chart Description</h2>
+<p>A Helm chart for the Hub and Spoke Azure Kubernetes DNS Operator</p>
+<h2 id="maintainers">Maintainers</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Url</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Marcus Aleksandravicius</td>
+<td><a href="mailto:marcus1aleksand@gmail.com">marcus1aleksand@gmail.com</a></td>
+<td><a href="https://github.com/marcus1aleksand">https://github.com/marcus1aleksand</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="values">Values</h2>
+<table height="400px">
+<thead>
+<th>Key</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</thead>
+<tbody>
+<tr>
+<td id="azure--dnsResourceGroup"><a href="./values.yaml#L17">azure.dnsResourceGroup</a></td>
+<td>
+string
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+""
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="azure--dnsZone"><a href="./values.yaml#L16">azure.dnsZone</a></td>
+<td>
+string
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+""
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="azure--managedIdentityClientId"><a href="./values.yaml#L18">azure.managedIdentityClientId</a></td>
+<td>
+string
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+""
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="azure--subscriptionId"><a href="./values.yaml#L15">azure.subscriptionId</a></td>
+<td>
+string
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+""
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="customIP"><a href="./values.yaml#L11">customIP</a></td>
+<td>
+string
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+""
+</pre>
+</div>
+</td>
+<td>Paramater with the IP address to override the ingress assigned IP when creating the DNS record.</td>
+</tr>
+<tr>
+<td id="customTTL"><a href="./values.yaml#L13">customTTL</a></td>
+<td>
+int
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+300
+</pre>
+</div>
+</td>
+<td>Paramater with the TTL to be used when creating the automated DNS record.</td>
+</tr>
+<tr>
+<td id="deployment--automountServiceAccountToken"><a href="./values.yaml#L9">deployment.automountServiceAccountToken</a></td>
+<td>
+bool
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+false
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="fullnameOverride"><a href="./values.yaml#L6">fullnameOverride</a></td>
+<td>
+string
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+""
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="image--pullPolicy"><a href="./values.yaml#L3">image.pullPolicy</a></td>
+<td>
+string
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+"Always"
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="image--repository"><a href="./values.yaml#L2">image.repository</a></td>
+<td>
+string
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+"docker.cloudsmith.io/opennms/docker-private/dnsoperator"
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="imageCredentials"><a href="./values.yaml#L4">imageCredentials</a></td>
+<td>
+string
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+"image-credentials"
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="nameOverride"><a href="./values.yaml#L5">nameOverride</a></td>
+<td>
+string
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+""
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="replicaCount"><a href="./values.yaml#L7">replicaCount</a></td>
+<td>
+int
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+1
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="serviceAccount--create"><a href="./values.yaml#L20">serviceAccount.create</a></td>
+<td>
+bool
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+true
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+<tr>
+<td id="serviceAccount--name"><a href="./values.yaml#L21">serviceAccount.name</a></td>
+<td>
+string
+</td>
+<td>
+<div style="max-width: 300px;">
+<pre lang="json">
+"azurednsoperator"
+</pre>
+</div>
+</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="security-checks">Security Checks</h2>
+<p>Security checks in this repository are performed by a pipeline that executes Checkov whenever a Pull Request is created against the main branch.</p>
+<p><a href="https://github.com/bridgecrewio/checkov?tab=readme-ov-file">Checkov</a> is a static code analysis tool for infrastructure as code (IaC) and also a software composition analysis (SCA) tool for images and open source packages.</p>
+<p>It scans cloud infrastructure provisioned using Terraform, Terraform plan, Cloudformation, AWS SAM, Kubernetes, Helm charts, Kustomize, Dockerfile, Serverless, Bicep, OpenAPI or ARM Templates and detects security and compliance misconfigurations using graph-based scanning.</p>
+<p>It performs Software Composition Analysis (SCA) scanning which is a scan of open source packages and images for Common Vulnerabilities and Exposures (CVEs).</p>
+<p>Checkov also powers Prisma Cloud Application Security, the developer-first platform that codifies and streamlines cloud security throughout the development lifecycle. Prisma Cloud identifies, fixes, and prevents misconfigurations in cloud resources and infrastructure-as-code files.</p>
+<h2 id="validation-hooks">Validation Hooks</h2>
+<p>This repository has pre-commit hooks configuration within it. This is utilized to run a set of validations locally such as automatically fixing formatting issues before the code is pushed to a remote branch.git s</p>
+<p>In order to have the pre-commit working in your local IDE, after cloning this repository locally, run the following commands:</p>
+<ol>
+<li>Install pre-commit locally</li>
+</ol>
+<pre><code>brew install pre-commit
+</code></pre>
+<ol>
+<li>After cloning this repository and having pre-commit installed in your locall computer, run the following command via CLI in the repository directory:</li>
+</ol>
+<pre><code>pre-commit install
+</code></pre>
+<p>Done! now whenever a commit command is executed, your code terraform code will be fully validated and documentation will be automatically updated before it is pushed to the remote repository's branch.</p>
+<hr/></div>
+</div>
+</div>
+<footer class="col-md-12">
+<hr/>
+<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</footer>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+<script src="js/base.js"></script>
+<script src="search/main.js"></script>
+<div aria-hidden="true" aria-labelledby="searchModalLabel" class="modal" id="mkdocs_search_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="searchModalLabel">Search</h4>
+<button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+</div>
+<div class="modal-body">
+<p>From here you can search these documents. Enter your search terms below.</p>
+<form>
+<div class="form-group">
+<input class="form-control" id="mkdocs-search-query" placeholder="Search..." title="Type search term here" type="search"/>
+</div>
+</form>
+<div data-no-results-text="No results found" id="mkdocs-search-results"></div>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div><div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+<button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<thead>
+<tr>
+<th style="width: 20%;">Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="help shortcut"><kbd>?</kbd></td>
+<td>Open this help</td>
+</tr>
+<tr>
+<td class="next shortcut"><kbd>n</kbd></td>
+<td>Next page</td>
+</tr>
+<tr>
+<td class="prev shortcut"><kbd>p</kbd></td>
+<td>Previous page</td>
+</tr>
+<tr>
+<td class="search shortcut"><kbd>s</kbd></td>
+<td>Search</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>
+<!--
+MkDocs version : 1.6.0
+Build Date UTC : 2024-08-14 01:17:53.476735+00:00
+-->
