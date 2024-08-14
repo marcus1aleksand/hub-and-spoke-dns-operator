@@ -74,18 +74,18 @@ jobs:
         helm inspect chart *.tgz
         helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/helm-charts
 
-    # - name: Update the Chart version
-    #   uses: fjogeleit/yaml-update-action@main
-    #   with:
-    #     valueFile: './charts/Chart.yaml'
-    #     repository: hub-and-spoke-dns-operator
-    #     branch: main
-    #     createPR: false
-    #     token: ${{ secrets.GITHUB_TOKEN }}
-    #     commitChange: true
-    #     message: 'Update Helm chart version to ${{ steps.tag_version.outputs.new_tag }}'
-    #     changes: |
-    #       {
-    #         "version": "${{ steps.tag_version.outputs.new_tag }}",
-    #         "appVersion": "${{ steps.tag_version.outputs.new_tag }}"
-    #       }
+    - name: Update the Chart version
+      uses: fjogeleit/yaml-update-action@main
+      with:
+        valueFile: 'charts/Chart.yaml'
+        repository: 'hub-and-spoke-dns-operator'
+        branch: main
+        createPR: false
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commitChange: true
+        message: 'Update Helm chart version to ${{ steps.tag_version.outputs.new_tag }}'
+        changes: |
+          {
+            "version": "${{ steps.tag_version.outputs.new_tag }}",
+            "appVersion": "${{ steps.tag_version.outputs.new_tag }}"
+          }
