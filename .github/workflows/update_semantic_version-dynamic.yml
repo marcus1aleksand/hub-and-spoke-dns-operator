@@ -1,4 +1,4 @@
-name: Version Update
+name: Release Version
 
 on:
   push:
@@ -52,7 +52,7 @@ jobs:
       id: release
       with:
         tag: ${{ steps.tag_version.outputs.new_tag }}
-        name: "hub-and-spoke-azure-dns-operator"
+        name: "hub-and-spoke-dns-operator"
         draft: false
         prerelease: false
         commit: ${{ steps.semantic_version.outputs.current_commit }}
@@ -63,8 +63,8 @@ jobs:
     - name: Build and Push Container Image
       working-directory: ./operator
       run: |
-        docker build -t ghcr.io/${{ github.repository_owner }}/hub-and-spoke-azure-dns-operator:${{ steps.tag_version.outputs.new_tag }} .
-        docker push ghcr.io/${{ github.repository_owner }}/hub-and-spoke-azure-dns-operator:${{ steps.tag_version.outputs.new_tag }}
+        docker build -t ghcr.io/${{ github.repository_owner }}/hub-and-spoke-dns-operator:${{ steps.tag_version.outputs.new_tag }} .
+        docker push ghcr.io/${{ github.repository_owner }}/hub-and-spoke-dns-operator:${{ steps.tag_version.outputs.new_tag }}
     
     - name: Package and Publish Helm-Chart
       working-directory: ./charts
@@ -78,7 +78,7 @@ jobs:
       uses: fjogeleit/yaml-update-action@main
       with:
         valueFile: 'charts/Chart.yaml'
-        repository: hub-and-spoke-azure-dns-operator
+        repository: hub-and-spoke-dns-operator
         branch: main
         createPR: false
         token: ${{ secrets.GITHUB_TOKEN }}
