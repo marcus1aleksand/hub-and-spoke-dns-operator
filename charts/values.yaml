@@ -1,0 +1,21 @@
+image:
+  repository: ghcr.io/marcus1aleksand/hub-and-spoke-azure-dns-operator
+  pullPolicy: Always
+imageCredentials: ""
+nameOverride: ""
+fullnameOverride: ""
+replicaCount: 1
+deployment:
+  automountServiceAccountToken: false
+# customIP -- Paramater with the IP address to override the ingress assigned IP when creating the DNS record.
+customIP: ''
+# customTTL -- Paramater with the TTL to be used when creating the automated DNS record.
+customTTL: 300
+azure:
+  subscriptionId: ""
+  dnsZone: ""
+  dnsResourceGroup: ""
+  managedIdentityClientId: ""
+serviceAccount:
+  create: true
+  name: "azurednsoperator"

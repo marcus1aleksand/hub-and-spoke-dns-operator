@@ -1,0 +1,9 @@
+# Checkov configuration file for Helm scan script
+download-external-modules: true
+evaluate-variables: true
+external-modules-download-path:
+framework: helm
+output: cli
+#skip-fixes: true
+soft-fail: true
+compact: true

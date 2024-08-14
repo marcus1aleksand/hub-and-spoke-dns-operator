@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dns-operator.fullname" . }}
+  labels:
+    {{- include "dns-operator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ default .Values.replicaCount 1 }}
+  selector:
+    matchLabels:
+      {{- include "dns-operator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations: &annotations
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+      labels: &labels
+        {{- include "dns-operator.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.imageCredentials }}
+      imagePullSecrets: 
+        - name : {{ .Values.imageCredentials | default "image-credentials" }}
+          {{- end }}
+      serviceAccountName: {{ include "dns-operator.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 30
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 30
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          env:
+            - name: AZURE_SUBSCRIPTION_ID
+              value: "{{ .Values.azure.subscriptionId }}"
+            - name: AZURE_DNS_ZONE
+              value: "{{ .Values.azure.dnsZone }}"
+            - name: AZURE_DNS_RESOURCE_GROUP
+              value: "{{ .Values.azure.dnsResourceGroup }}"
+            - name: MANAGED_IDENTITY_CLIENT_ID
+              value: "{{ .Values.azure.managedIdentityClientId }}"
+            - name: CUSTOM_IP
+              value: "{{ .Values.customIP }}"
+            - name: CUSTOM_TTL
+              value: "{{ .Values.customTTL }}"
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: service-account-token
+              mountPath: "/var/run/secrets/kubernetes.io/serviceaccount"
+              readOnly: true
+      nodeSelector: {{- toYaml .Values.nodeSelector | nindent 8 }}
+      tolerations: {{- toYaml .Values.tolerations | nindent 8 }}
+      affinity: {{- toYaml .Values.affinity | nindent 8 }}
+      automountServiceAccountToken: {{ default .Values.deployment.automountServiceAccountToken true }}
+      securityContext:
+        fsGroup: 1000
+      volumes:
+        - name: service-account-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+              - configMap:
+                  name: kube-root-ca.crt
+                  items:
+                    - key: ca.crt
+                      path: ca.crt

@@ -1,0 +1,10 @@
+site_name: "Azure Hub and Spoke DNS Operator"
+
+nav:
+  - Docs: index.md
+  
+plugins:
+  - techdocs-core
+  - mermaid2
+  - search
+

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: hub-and-spoke-azure-dns-operator
+description: A Helm chart for the Hub and Spoke Azure Kubernetes DNS Operator
+type: application
+version: 0.0.1
+appVersion: 0.0.1
+maintainers:
+  - name: Marcus Aleks
+    email: marcus@aleksand.com
+    url: https://github.com/marcus1aleksand

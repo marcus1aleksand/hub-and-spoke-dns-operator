@@ -1,0 +1,35 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "enabled": true,
+      "schedule": [
+        "after 9pm on saturday"
+      ],
+      "managers": [
+        "helmv3",
+        "dockerfile",
+        "pip_requirements",
+        "poetry"
+      ],
+      "additionalBranchPrefix": "{{baseDir}}-",
+      "depTypes": [
+        "dependencies"
+      ]
+    }
+  ],
+  "helmv3": {
+    "enabled": true
+  },
+  "dockerfile": {
+    "enabled": true
+  },
+  "pip_requirements": {
+    "enabled": true
+  },
+  "poetry": {
+    "enabled": true
+  }
+}

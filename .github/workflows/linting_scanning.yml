@@ -1,0 +1,80 @@
+name: Lint and Security Scan
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: 
+      - opened
+      - synchronize 
+      - reopened
+
+jobs:
+  lint-python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+
+      - name: Run flake8 (Python Linting)
+        run: |
+          flake8 ./operator/ --max-line-length=120
+
+
+  lint-helm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Run helm lint
+        working-directory: charts
+        run: |
+          helm lint .
+    
+  scan-python:
+    runs-on: ubuntu-latest
+    needs: lint-python
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit
+
+      - name: Run bandit (Security Scan)
+        run: |
+          bandit -r ./operator/main.py
+
+  scan-helm:
+    runs-on: ubuntu-latest
+    needs: lint-helm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkov Scan
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          config_file: checkov.yaml
