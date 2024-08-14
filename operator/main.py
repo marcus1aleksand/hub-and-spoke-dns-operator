@@ -52,7 +52,7 @@ async def create_or_update_dns_record(ingress, action):
     ttl = int(os.environ.get("CUSTOM_TTL", 300))
 
     try:
-        # Create or update the A record in Azure DNS
+        # Create or update the A record in Azure DNS Zone
         await dns_client.record_sets.create_or_update(
             azure_dns_resource_group,
             azure_dns_zone,
