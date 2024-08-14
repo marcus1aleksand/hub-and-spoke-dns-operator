@@ -1,6 +1,6 @@
 apiVersion: v2
-name: hub-and-spoke-azure-dns-operator
-description: A Helm chart for the Hub and Spoke Azure Kubernetes DNS Operator
+name: hub-and-spoke-dns-operator
+description: A Helm chart for the Hub and Spoke DNS Kubernetes DNS Operator
 type: application
 version: 0.0.1
 appVersion: 0.0.1
