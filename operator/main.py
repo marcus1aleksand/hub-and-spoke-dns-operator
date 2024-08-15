@@ -121,10 +121,8 @@ async def readiness_check(request):
 app.router.add_get("/readyz", readiness_check)
 
 
-async def main():
-    health_check_server = web._run_app(
-        app, host="0.0.0.0", port=8080
-    )  # nosec false-positive on Bandit for healthcheck host
+async def main():  # nosec
+    health_check_server = web._run_app(app, host="0.0.0.0", port=8080)
     kopf_operator = kopf.operator()
 
     await asyncio.gather(health_check_server, kopf_operator)
