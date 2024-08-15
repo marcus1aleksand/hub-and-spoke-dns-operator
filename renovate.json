@@ -17,7 +17,8 @@
       "additionalBranchPrefix": "{{baseDir}}-",
       "depTypes": [
         "dependencies"
-      ]
+      ],
+      "groupName": "all-updates"
     }
   ],
   "helmv3": {
