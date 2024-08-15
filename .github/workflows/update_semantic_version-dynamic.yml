@@ -74,7 +74,7 @@ jobs:
         helm inspect chart *.tgz
         helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/helm-charts
 
-    - name: Update the Chart version
+    - name: Update Image Version in the related HelmChart values.yaml
       uses: fjogeleit/yaml-update-action@main
       with:
         valueFile: 'charts/Chart.yaml'
@@ -83,7 +83,7 @@ jobs:
         createPR: false
         token: ${{ secrets.GITHUB_TOKEN }}
         commitChange: true
-        message: 'Update Helm chart version to ${{ steps.tag_version.outputs.new_tag }}'
+        message: 'Update Helm Chart version to ${{ steps.tag_version.outputs.new_tag }}'
         changes: |
           {
             "version": "${{ steps.tag_version.outputs.new_tag }}",
