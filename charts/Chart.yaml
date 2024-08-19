@@ -2,8 +2,8 @@ apiVersion: v2
 name: hub-and-spoke-dns-operator
 description: A Helm chart for the Hub and Spoke DNS Kubernetes DNS Operator
 type: application
-version: 0.0.2
-appVersion: 0.0.2
+version: 0.0.3
+appVersion: 0.0.3
 maintainers:
   - name: Marcus Aleks
     email: marcus@aleksand.com
