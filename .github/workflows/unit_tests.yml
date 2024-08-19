@@ -1,12 +1,11 @@
 name: Run Python Unit Tests
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Lint and Security Scan"]
+    branches: [main]
+    types:
+      - completed
 
 jobs:
   test:
