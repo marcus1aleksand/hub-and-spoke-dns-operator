@@ -78,10 +78,11 @@ jobs:
       uses: fjogeleit/yaml-update-action@main
       with:
         valueFile: 'charts/Chart.yaml'
-        repository: 'hub-and-spoke-dns-operator'
+        repository: 'marcus1aleksand/hub-and-spoke-dns-operator'
+        targetBranch: main
         branch: main
         createPR: false
-        token: ${{ secrets.GH_PAT }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         commitChange: true
         message: 'Update Helm Chart version to ${{ steps.tag_version.outputs.new_tag }}'
         changes: |
