@@ -3,13 +3,13 @@ name: Build Test
 on:
   workflow_run:
     workflows: ["Lint and Security Scan"]
-    branches: [main]
     types:
       - completed
 
 jobs:
   build-test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Build and Push Container Image
         working-directory: ./operator
