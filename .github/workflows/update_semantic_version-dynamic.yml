@@ -81,7 +81,7 @@ jobs:
         repository: 'hub-and-spoke-dns-operator'
         branch: main
         createPR: false
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GH_PAT }}
         commitChange: true
         message: 'Update Helm Chart version to ${{ steps.tag_version.outputs.new_tag }}'
         changes: |
