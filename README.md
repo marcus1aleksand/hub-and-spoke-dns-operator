@@ -261,6 +261,14 @@ string
 	</tbody>
 </table>
 
+## Installation
+
+Install the hub-and-spoke-dns-operator helm chart:
+
+```bash
+helm install hub-and-spoke-dns-operator oci://ghcr.io/marcus1aleksand/helm-charts/hub-and-spoke-dns-operator
+```
+
 ## Security Checks
 
 Security checks in this repository are performed by a pipeline that executes Checkov whenever a Pull Request is created against the main branch.

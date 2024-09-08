@@ -8,24 +8,24 @@ This operator monitors Kubernetes events for Ingress resource creation, updates,
 
 ```mermaid
 graph TD
-    A[User] --> B[Firewall<br>Public IP NAT]
-    B --> C[Hub Network]
-    C --> D[Spoke Network 1]
-    C --> E[Spoke Network 2]
-    D --> F[Kubernetes Cluster 1]
-    E --> G[Kubernetes Cluster 2]
-    F --> H[Ingress 1]
-    G --> I[Ingress 2]
+	A[User] --> B[Firewall<br>Public IP NAT]
+	B --> C[Hub Network]
+	C --> D[Spoke Network 1]
+	C --> E[Spoke Network 2]
+	D --> F[Kubernetes Cluster 1]
+	E --> G[Kubernetes Cluster 2]
+	F --> H[Ingress 1]
+	G --> I[Ingress 2]
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#ccf,stroke:#333,stroke-width:2px
-    style C fill:#ccf,stroke:#333,stroke-width:2px
-    style D fill:#ccf,stroke:#333,stroke-width:2px
-    style E fill:#ccf,stroke:#333,stroke-width:2px
-    style F fill:#ffc,stroke:#333,stroke-width:2px
-    style G fill:#ffc,stroke:#333,stroke-width:2px
-    style H fill:#ffc,stroke:#333,stroke-width:2px
-    style I fill:#ffc,stroke:#333,stroke-width:2px
+	style A fill:#f9f,stroke:#333,stroke-width:2px
+	style B fill:#ccf,stroke:#333,stroke-width:2px
+	style C fill:#ccf,stroke:#333,stroke-width:2px
+	style D fill:#ccf,stroke:#333,stroke-width:2px
+	style E fill:#ccf,stroke:#333,stroke-width:2px
+	style F fill:#ffc,stroke:#333,stroke-width:2px
+	style G fill:#ffc,stroke:#333,stroke-width:2px
+	style H fill:#ffc,stroke:#333,stroke-width:2px
+	style I fill:#ffc,stroke:#333,stroke-width:2px
 ```
 
 ## Helm-chart Description
@@ -260,6 +260,14 @@ string
 		</tr>
 	</tbody>
 </table>
+
+## Installation
+
+Install the hub-and-spoke-dns-operator helm chart:
+
+```bash
+helm install hub-and-spoke-dns-operator oci://ghcr.io/marcus1aleksand/helm-charts/hub-and-spoke-dns-operator
+```
 
 ## Security Checks
 
