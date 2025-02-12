@@ -11,6 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify Directory Structure
+        run: ls -la && ls -la operator
+
       - name: Build and Push Container Image
         working-directory: ./operator
         run: |
