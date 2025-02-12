@@ -1,6 +1,6 @@
 {
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "packageRules": [
     {
@@ -8,16 +8,13 @@
       "schedule": [
         "after 9pm on saturday"
       ],
-      "managers": [
+      "matchManagers": [
         "helmv3",
         "dockerfile",
         "pip_requirements",
         "poetry"
       ],
-      "additionalBranchPrefix": "{{baseDir}}-",
-      "depTypes": [
-        "dependencies"
-      ],
+      "additionalBranchPrefix": "{{packageFileDir}}-",
       "groupName": "all-updates"
     }
   ],
