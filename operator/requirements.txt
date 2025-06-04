@@ -1,5 +1,5 @@
-kopf==1.37.5
+kopf==1.38.0
 kubernetes==32.0.1
-azure-identity==1.21.0
+azure-identity==1.23.0
 azure-mgmt-dns==8.2.0
-aiohttp==3.11.14
+aiohttp==3.12.9
