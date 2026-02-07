@@ -19,3 +19,29 @@ azure:
 serviceAccount:
   create: true
   name: "azurednsoperator"
+
+# Service configuration
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8080
+  annotations: {}
+
+# Prometheus metrics configuration
+metrics:
+  # metrics.enabled -- Enable Prometheus metrics endpoint
+  enabled: true
+  
+  serviceMonitor:
+    # metrics.serviceMonitor.enabled -- Create a ServiceMonitor for Prometheus Operator
+    enabled: false
+    # metrics.serviceMonitor.namespace -- Namespace for the ServiceMonitor (defaults to release namespace)
+    namespace: ""
+    # metrics.serviceMonitor.interval -- Scrape interval
+    interval: 30s
+    # metrics.serviceMonitor.scrapeTimeout -- Scrape timeout
+    scrapeTimeout: 10s
+    # metrics.serviceMonitor.additionalLabels -- Additional labels for the ServiceMonitor
+    additionalLabels: {}
+    # metrics.serviceMonitor.honorLabels -- Honor labels from the target
+    honorLabels: false

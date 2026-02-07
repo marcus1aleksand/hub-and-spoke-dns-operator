@@ -60,6 +60,8 @@ spec:
               value: "{{ .Values.customIP }}"
             - name: CUSTOM_TTL
               value: "{{ .Values.customTTL }}"
+            - name: OPERATOR_VERSION
+              value: "{{ .Chart.AppVersion }}"
           resources: {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: service-account-token
