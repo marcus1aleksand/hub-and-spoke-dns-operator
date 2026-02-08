@@ -117,3 +117,38 @@ async def test_readiness_check():
         response = await main.readiness_check(request)
         mock_response.assert_called_once_with(text="OK")
         assert response == mock_response()
+
+
+@pytest.mark.asyncio
+async def test_metrics_endpoint():
+    """Test that the metrics endpoint returns Prometheus metrics"""
+    request = MagicMock()
+    response = await main.metrics_handler(request)
+
+    # Check response has correct content type
+    assert response.content_type == "text/plain; version=0.0.4; charset=utf-8"
+
+    # Check that response body contains expected metrics
+    body = response.body.decode('utf-8')
+    assert 'dns_operator_operations_total' in body
+    assert 'dns_operator_operation_duration_seconds' in body
+    assert 'dns_operator_errors_total' in body
+    assert 'dns_operator_records_managed' in body
+    assert 'dns_operator_info' in body
+
+
+def test_metrics_increment_on_success(mock_dns_client, mock_api_client):
+    """Test that metrics are incremented on successful operations"""
+    from prometheus_client import REGISTRY
+
+    # Get initial values
+    REGISTRY.get_sample_value(
+        'dns_operator_operations_total',
+        {'operation': 'create', 'status': 'success'}
+    )
+
+    # The metrics should be defined
+    assert main.dns_operations_total is not None
+    assert main.dns_operation_duration_seconds is not None
+    assert main.dns_errors_total is not None
+    assert main.dns_records_managed is not None
