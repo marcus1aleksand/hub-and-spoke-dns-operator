@@ -88,6 +88,7 @@ operator_info.labels(
 # DNS OPERATIONS
 # =============================================================================
 
+
 async def create_or_update_dns_record(ingress, action):
     domain = ingress["spec"]["rules"][0]["host"]
     dns_zone = f".{azure_dns_zone}"
@@ -122,11 +123,12 @@ async def create_or_update_dns_record(ingress, action):
         duration = time.time() - start_time
         dns_operation_duration_seconds.labels(operation=action).observe(duration)
         dns_operations_total.labels(operation=action, status='success').inc()
-        
+
         if action == 'create':
             dns_records_managed.inc()
 
-        logger.info(f"DNS record {'created' if action == 'create' else 'updated'}: {host_without_dns_zone} -> {ip} (took {duration:.3f}s)")
+        verb = 'created' if action == 'create' else 'updated'
+        logger.info(f"DNS record {verb}: {host_without_dns_zone} -> {ip} ({duration:.3f}s)")
 
     except HttpResponseError as e:
         # Record error metrics
@@ -134,7 +136,7 @@ async def create_or_update_dns_record(ingress, action):
         dns_operation_duration_seconds.labels(operation=action).observe(duration)
         dns_operations_total.labels(operation=action, status='error').inc()
         dns_errors_total.labels(operation=action, error_type='http_response_error').inc()
-        
+
         logger.error(
             f"Error {'creating' if action == 'create' else 'updating'} DNS record {host_without_dns_zone}: {e.message}"
         )
@@ -169,7 +171,7 @@ async def delete_dns_record(ingress):
         dns_operation_duration_seconds.labels(operation='delete').observe(duration)
         dns_operations_total.labels(operation='delete', status='error').inc()
         dns_errors_total.labels(operation='delete', error_type='http_response_error').inc()
-        
+
         logger.error(f"Error deleting DNS record {host_without_dns_zone}: {f.message}")
 
 

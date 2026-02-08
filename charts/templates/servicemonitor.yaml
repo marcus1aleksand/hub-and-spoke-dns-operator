@@ -2,9 +2,9 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "hub-and-spoke-dns-operator.fullname" . }}
+  name: {{ include "dns-operator.fullname" . }}
   labels:
-    {{- include "hub-and-spoke-dns-operator.labels" . | nindent 4 }}
+    {{- include "dns-operator.labels" . | nindent 4 }}
     {{- with .Values.metrics.serviceMonitor.additionalLabels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -27,5 +27,5 @@ spec:
       - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      {{- include "hub-and-spoke-dns-operator.selectorLabels" . | nindent 6 }}
+      {{- include "dns-operator.selectorLabels" . | nindent 6 }}
 {{- end }}
