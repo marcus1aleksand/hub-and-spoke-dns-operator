@@ -1,4 +1,4 @@
-kopf==1.42.5
+kopf==1.43.0
 kubernetes==35.0.0
 azure-identity==1.25.2
 azure-mgmt-dns==9.0.0
