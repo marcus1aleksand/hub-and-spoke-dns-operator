@@ -4,6 +4,7 @@
 
 **Automatically manage DNS records across Azure, GCP, and AWS from your Kubernetes Ingress resources.**
 
+[![Downloads](https://img.shields.io/github/downloads/marcus1aleksand/hub-and-spoke-dns-operator/total?style=for-the-badge&logo=github&label=Downloads)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/releases)
 [![Helm Version](https://img.shields.io/badge/Helm_Chart-v0.2.0-blue?style=for-the-badge&logo=helm)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/releases)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-1.28+-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io)
