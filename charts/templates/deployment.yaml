@@ -48,6 +48,16 @@ spec:
             successThreshold: 1
             failureThreshold: 3
           env:
+            - name: CLOUD_PROVIDER
+              value: "{{ .Values.cloudProvider }}"
+            - name: CUSTOM_IP
+              value: "{{ .Values.customIP }}"
+            - name: CUSTOM_TTL
+              value: "{{ .Values.customTTL }}"
+            - name: OPERATOR_VERSION
+              value: "{{ .Chart.AppVersion }}"
+            {{- if eq .Values.cloudProvider "azure" }}
+            # Azure-specific configuration
             - name: AZURE_SUBSCRIPTION_ID
               value: "{{ .Values.azure.subscriptionId }}"
             - name: AZURE_DNS_ZONE
@@ -56,17 +66,47 @@ spec:
               value: "{{ .Values.azure.dnsResourceGroup }}"
             - name: MANAGED_IDENTITY_CLIENT_ID
               value: "{{ .Values.azure.managedIdentityClientId }}"
-            - name: CUSTOM_IP
-              value: "{{ .Values.customIP }}"
-            - name: CUSTOM_TTL
-              value: "{{ .Values.customTTL }}"
-            - name: OPERATOR_VERSION
-              value: "{{ .Chart.AppVersion }}"
+            {{- end }}
+            {{- if eq .Values.cloudProvider "gcp" }}
+            # GCP-specific configuration
+            - name: GCP_PROJECT_ID
+              value: "{{ .Values.gcp.projectId }}"
+            - name: GCP_MANAGED_ZONE
+              value: "{{ .Values.gcp.managedZone }}"
+            - name: GCP_DNS_ZONE
+              value: "{{ .Values.gcp.dnsZone }}"
+            {{- if .Values.gcp.serviceAccountKey }}
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/var/secrets/google/key.json"
+            {{- end }}
+            {{- end }}
+            {{- if eq .Values.cloudProvider "aws" }}
+            # AWS-specific configuration
+            - name: AWS_HOSTED_ZONE_ID
+              value: "{{ .Values.aws.hostedZoneId }}"
+            - name: AWS_DNS_ZONE
+              value: "{{ .Values.aws.dnsZone }}"
+            - name: AWS_REGION
+              value: "{{ .Values.aws.region }}"
+            {{- if .Values.aws.accessKeyId }}
+            - name: AWS_ACCESS_KEY_ID
+              value: "{{ .Values.aws.accessKeyId }}"
+            {{- end }}
+            {{- if .Values.aws.secretAccessKey }}
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "{{ .Values.aws.secretAccessKey }}"
+            {{- end }}
+            {{- end }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: service-account-token
               mountPath: "/var/run/secrets/kubernetes.io/serviceaccount"
               readOnly: true
+            {{- if and (eq .Values.cloudProvider "gcp") .Values.gcp.serviceAccountKey }}
+            - name: gcp-sa-key
+              mountPath: "/var/secrets/google"
+              readOnly: true
+            {{- end }}
       nodeSelector: {{- toYaml .Values.nodeSelector | nindent 8 }}
       tolerations: {{- toYaml .Values.tolerations | nindent 8 }}
       affinity: {{- toYaml .Values.affinity | nindent 8 }}
@@ -84,3 +124,8 @@ spec:
                   items:
                     - key: ca.crt
                       path: ca.crt
+        {{- if and (eq .Values.cloudProvider "gcp") .Values.gcp.serviceAccountKey }}
+        - name: gcp-sa-key
+          secret:
+            secretName: {{ .Values.gcp.serviceAccountKey }}
+        {{- end }}

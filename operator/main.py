@@ -4,9 +4,6 @@ import logging
 import asyncio
 import time
 from kubernetes import client, config
-from azure.identity import ManagedIdentityCredential
-from azure.mgmt.dns import DnsManagementClient
-from azure.core.exceptions import HttpResponseError
 from aiohttp import web
 from prometheus_client import Counter, Histogram, Gauge, generate_latest, CONTENT_TYPE_LATEST
 
@@ -18,69 +15,79 @@ logger = logging.getLogger(__name__)
 # PROMETHEUS METRICS
 # =============================================================================
 
-# Counter for DNS operations
 dns_operations_total = Counter(
     'dns_operator_operations_total',
     'Total number of DNS operations',
-    ['operation', 'status']  # operation: create/update/delete, status: success/error
+    ['operation', 'status', 'provider']
 )
 
-# Histogram for DNS operation latency
 dns_operation_duration_seconds = Histogram(
     'dns_operator_operation_duration_seconds',
     'Duration of DNS operations in seconds',
-    ['operation'],
+    ['operation', 'provider'],
     buckets=[0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0]
 )
 
-# Counter for DNS errors by type
 dns_errors_total = Counter(
     'dns_operator_errors_total',
     'Total number of DNS operation errors',
-    ['operation', 'error_type']
+    ['operation', 'error_type', 'provider']
 )
 
-# Gauge for currently managed DNS records
 dns_records_managed = Gauge(
     'dns_operator_records_managed',
     'Number of DNS records currently managed by the operator'
 )
 
-# Info metric for operator metadata
 operator_info = Gauge(
     'dns_operator_info',
     'Operator information',
-    ['dns_zone', 'resource_group', 'version']
+    ['dns_zone', 'provider', 'version']
 )
 
 # =============================================================================
-# KUBERNETES & AZURE SETUP
+# CLOUD PROVIDER FACTORY
 # =============================================================================
 
-# Load in-cluster Kubernetes configuration
-config.load_incluster_config()
+def create_dns_provider():
+    """Create the appropriate DNS provider based on CLOUD_PROVIDER env var.
 
-# Initialize Kubernetes API client
+    Supported values: azure (default), gcp, aws
+    """
+    provider_name = os.environ.get("CLOUD_PROVIDER", "azure").lower()
+
+    if provider_name == "azure":
+        from providers.azure import AzureDNSProvider
+        return AzureDNSProvider()
+    elif provider_name == "gcp":
+        from providers.gcp import GCPDNSProvider
+        return GCPDNSProvider()
+    elif provider_name == "aws":
+        from providers.aws import AWSDNSProvider
+        return AWSDNSProvider()
+    else:
+        raise ValueError(f"Unsupported cloud provider: {provider_name}. Use 'azure', 'gcp', or 'aws'.")
+
+
+# =============================================================================
+# KUBERNETES & DNS PROVIDER SETUP
+# =============================================================================
+
+config.load_incluster_config()
 api_client = client.NetworkingV1Api()
 
-# Authenticate with Azure using Azure Managed Identity
-credential = ManagedIdentityCredential(client_id=os.environ["MANAGED_IDENTITY_CLIENT_ID"])
+# Initialize cloud DNS provider
+dns_provider = create_dns_provider()
 
-# Initialize Azure DNS management client
-dns_client = DnsManagementClient(credential, os.environ["AZURE_SUBSCRIPTION_ID"])
+# Get DNS zone for metrics (provider-agnostic)
+dns_zone = os.environ.get("AZURE_DNS_ZONE") or os.environ.get("GCP_DNS_ZONE") or os.environ.get("AWS_DNS_ZONE", "unknown")
 
-# Set Azure DNS Zone and Resource Group
-azure_dns_zone = os.environ["AZURE_DNS_ZONE"]
-azure_dns_resource_group = os.environ["AZURE_DNS_RESOURCE_GROUP"]
-
-# Get the custom IP value from the environment variable
 custom_ip_from_values = os.environ.get("CUSTOM_IP", None)
 
-# Set operator info metric
-OPERATOR_VERSION = os.environ.get("OPERATOR_VERSION", "0.0.10")
+OPERATOR_VERSION = os.environ.get("OPERATOR_VERSION", "0.1.5")
 operator_info.labels(
-    dns_zone=azure_dns_zone,
-    resource_group=azure_dns_resource_group,
+    dns_zone=dns_zone,
+    provider=dns_provider.provider_name,
     version=OPERATOR_VERSION
 ).set(1)
 
@@ -91,13 +98,7 @@ operator_info.labels(
 
 async def create_or_update_dns_record(ingress, action):
     domain = ingress["spec"]["rules"][0]["host"]
-    dns_zone = f".{azure_dns_zone}"
-    zone_position = domain.find(dns_zone)
-
-    if zone_position != -1:
-        domain = domain[:zone_position]
-
-    host_without_dns_zone = domain
+    provider_name = dns_provider.provider_name
 
     # Check for custom IP annotation and ingressclass
     use_custom_ip = custom_ip_from_values and (
@@ -105,74 +106,53 @@ async def create_or_update_dns_record(ingress, action):
         and ingress["spec"].get("ingressClassName") != "nginx-internal"
     )
     ip = custom_ip_from_values if use_custom_ip else ingress["status"]["loadBalancer"]["ingress"][0]["ip"]
-
     ttl = int(os.environ.get("CUSTOM_TTL", 300))
 
     start_time = time.time()
     try:
-        # Create or update the A record in Azure DNS Zone
-        await dns_client.record_sets.create_or_update(
-            azure_dns_resource_group,
-            azure_dns_zone,
-            host_without_dns_zone,
-            "A",
-            {"ttl": ttl, "arecords": [{"ipv4_address": ip}]},
-        )
+        await dns_provider.create_or_update_record(domain, ip, ttl)
 
-        # Record metrics
         duration = time.time() - start_time
-        dns_operation_duration_seconds.labels(operation=action).observe(duration)
-        dns_operations_total.labels(operation=action, status='success').inc()
+        dns_operation_duration_seconds.labels(operation=action, provider=provider_name).observe(duration)
+        dns_operations_total.labels(operation=action, status='success', provider=provider_name).inc()
 
         if action == 'create':
             dns_records_managed.inc()
 
         verb = 'created' if action == 'create' else 'updated'
-        logger.info(f"DNS record {verb}: {host_without_dns_zone} -> {ip} ({duration:.3f}s)")
+        logger.info(f"[{provider_name}] DNS record {verb}: {domain} -> {ip} ({duration:.3f}s)")
 
-    except HttpResponseError as e:
-        # Record error metrics
+    except Exception as e:
         duration = time.time() - start_time
-        dns_operation_duration_seconds.labels(operation=action).observe(duration)
-        dns_operations_total.labels(operation=action, status='error').inc()
-        dns_errors_total.labels(operation=action, error_type='http_response_error').inc()
+        dns_operation_duration_seconds.labels(operation=action, provider=provider_name).observe(duration)
+        dns_operations_total.labels(operation=action, status='error', provider=provider_name).inc()
+        dns_errors_total.labels(operation=action, error_type=type(e).__name__, provider=provider_name).inc()
 
-        logger.error(
-            f"Error {'creating' if action == 'create' else 'updating'} DNS record {host_without_dns_zone}: {e.message}"
-        )
+        logger.error(f"[{provider_name}] Error {'creating' if action == 'create' else 'updating'} DNS record {domain}: {e}")
 
 
 async def delete_dns_record(ingress):
     domain = ingress["spec"]["rules"][0]["host"]
-    dns_zone = f".{azure_dns_zone}"
-    zone_position = domain.find(dns_zone)
-
-    if zone_position != -1:
-        domain = domain[:zone_position]
-
-    host_without_dns_zone = domain
+    provider_name = dns_provider.provider_name
 
     start_time = time.time()
     try:
-        # Delete the A record from Azure Public DNS Zone
-        await dns_client.record_sets.delete(azure_dns_resource_group, azure_dns_zone, host_without_dns_zone, "A")
+        await dns_provider.delete_record(domain)
 
-        # Record metrics
         duration = time.time() - start_time
-        dns_operation_duration_seconds.labels(operation='delete').observe(duration)
-        dns_operations_total.labels(operation='delete', status='success').inc()
+        dns_operation_duration_seconds.labels(operation='delete', provider=provider_name).observe(duration)
+        dns_operations_total.labels(operation='delete', status='success', provider=provider_name).inc()
         dns_records_managed.dec()
 
-        logger.info(f"DNS record deleted: {host_without_dns_zone} (took {duration:.3f}s)")
+        logger.info(f"[{provider_name}] DNS record deleted: {domain} ({duration:.3f}s)")
 
-    except HttpResponseError as f:
-        # Record error metrics
+    except Exception as e:
         duration = time.time() - start_time
-        dns_operation_duration_seconds.labels(operation='delete').observe(duration)
-        dns_operations_total.labels(operation='delete', status='error').inc()
-        dns_errors_total.labels(operation='delete', error_type='http_response_error').inc()
+        dns_operation_duration_seconds.labels(operation='delete', provider=provider_name).observe(duration)
+        dns_operations_total.labels(operation='delete', status='error', provider=provider_name).inc()
+        dns_errors_total.labels(operation='delete', error_type=type(e).__name__, provider=provider_name).inc()
 
-        logger.error(f"Error deleting DNS record {host_without_dns_zone}: {f.message}")
+        logger.error(f"[{provider_name}] Error deleting DNS record {domain}: {e}")
 
 
 # =============================================================================

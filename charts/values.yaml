@@ -7,18 +7,59 @@ fullnameOverride: ""
 replicaCount: 1
 deployment:
   automountServiceAccountToken: false
-# customIP -- Paramater with the IP address to override the ingress assigned IP when creating the DNS record.
+
+# cloudProvider -- The cloud provider to use for DNS management. Supported: azure, gcp, aws
+cloudProvider: "azure"
+
+# customIP -- Parameter with the IP address to override the ingress assigned IP when creating the DNS record.
 customIP: ''
-# customTTL -- Paramater with the TTL to be used when creating the automated DNS record.
+# customTTL -- Parameter with the TTL to be used when creating the automated DNS record.
 customTTL: 300
+
+# =============================================================================
+# Azure Configuration (cloudProvider: azure)
+# =============================================================================
 azure:
+  # azure.subscriptionId -- Azure Subscription ID
   subscriptionId: ""
+  # azure.dnsZone -- Azure DNS Zone name (e.g., example.com)
   dnsZone: ""
+  # azure.dnsResourceGroup -- Azure Resource Group containing the DNS Zone
   dnsResourceGroup: ""
+  # azure.managedIdentityClientId -- Client ID of the Azure Managed Identity
   managedIdentityClientId: ""
+
+# =============================================================================
+# GCP Configuration (cloudProvider: gcp)
+# =============================================================================
+gcp:
+  # gcp.projectId -- GCP Project ID
+  projectId: ""
+  # gcp.managedZone -- Cloud DNS Managed Zone name
+  managedZone: ""
+  # gcp.dnsZone -- DNS Zone domain (e.g., example.com)
+  dnsZone: ""
+  # gcp.serviceAccountKey -- Path to GCP service account JSON key (mounted via secret)
+  serviceAccountKey: ""
+
+# =============================================================================
+# AWS Configuration (cloudProvider: aws)
+# =============================================================================
+aws:
+  # aws.hostedZoneId -- Route53 Hosted Zone ID
+  hostedZoneId: ""
+  # aws.dnsZone -- DNS Zone domain (e.g., example.com)
+  dnsZone: ""
+  # aws.region -- AWS Region
+  region: "us-east-1"
+  # aws.accessKeyId -- AWS Access Key ID (use IAM roles for production)
+  accessKeyId: ""
+  # aws.secretAccessKey -- AWS Secret Access Key (use IAM roles for production)
+  secretAccessKey: ""
+
 serviceAccount:
   create: true
-  name: "azurednsoperator"
+  name: "dnsoperator"
 
 # Service configuration
 service:
@@ -31,7 +72,7 @@ service:
 metrics:
   # metrics.enabled -- Enable Prometheus metrics endpoint
   enabled: true
-  
+
   serviceMonitor:
     # metrics.serviceMonitor.enabled -- Create a ServiceMonitor for Prometheus Operator
     enabled: false
@@ -45,3 +86,9 @@ metrics:
     additionalLabels: {}
     # metrics.serviceMonitor.honorLabels -- Honor labels from the target
     honorLabels: false
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+podAnnotations: {}

@@ -1,9 +1,24 @@
 apiVersion: v2
 name: hub-and-spoke-dns-operator
-description: A Helm chart for the Hub and Spoke DNS Kubernetes DNS Operator
+description: A multi-cloud Kubernetes operator that automatically manages DNS records for Ingress resources in hub-and-spoke network architectures. Supports Azure DNS, Google Cloud DNS, and AWS Route53.
 type: application
-version: 0.1.5
-appVersion: 0.1.5
+version: 0.2.0
+appVersion: 0.2.0
+keywords:
+  - dns
+  - kubernetes
+  - operator
+  - azure
+  - gcp
+  - aws
+  - route53
+  - cloud-dns
+  - hub-and-spoke
+  - ingress
+  - multi-cloud
+home: https://github.com/marcus1aleksand/hub-and-spoke-dns-operator
+sources:
+  - https://github.com/marcus1aleksand/hub-and-spoke-dns-operator
 maintainers:
   - name: Marcus Aleks
     email: marcus@aleksand.com
