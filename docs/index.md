@@ -59,12 +59,10 @@ A multi-cloud Kubernetes operator that automatically manages DNS records for Ing
 </p>
 
 <div class="badges">
-
-[![Helm Version](https://img.shields.io/badge/Helm_Chart-v0.2.0-blue?style=for-the-badge&logo=helm)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/releases)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/blob/main/LICENSE)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-1.28+-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io)
-[![Python](https://img.shields.io/badge/Python-3.14-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-
+<a href="https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/releases"><img src="https://img.shields.io/badge/Helm_Chart-v0.2.0-blue?style=for-the-badge&logo=helm" alt="Helm Version"></a>
+<a href="https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"></a>
+<a href="https://kubernetes.io"><img src="https://img.shields.io/badge/Kubernetes-1.28+-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes"></a>
+<a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.14-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"></a>
 </div>
 
 [Get Started :material-arrow-right:](quickstart.md){ .md-button .md-button--primary }
