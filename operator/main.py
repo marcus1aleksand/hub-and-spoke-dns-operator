@@ -49,6 +49,7 @@ operator_info = Gauge(
 # CLOUD PROVIDER FACTORY
 # =============================================================================
 
+
 def create_dns_provider():
     """Create the appropriate DNS provider based on CLOUD_PROVIDER env var.
 
@@ -80,7 +81,11 @@ api_client = client.NetworkingV1Api()
 dns_provider = create_dns_provider()
 
 # Get DNS zone for metrics (provider-agnostic)
-dns_zone = os.environ.get("AZURE_DNS_ZONE") or os.environ.get("GCP_DNS_ZONE") or os.environ.get("AWS_DNS_ZONE", "unknown")
+dns_zone = (
+    os.environ.get("AZURE_DNS_ZONE")
+    or os.environ.get("GCP_DNS_ZONE")
+    or os.environ.get("AWS_DNS_ZONE", "unknown")
+)
 
 custom_ip_from_values = os.environ.get("CUSTOM_IP", None)
 
@@ -128,7 +133,8 @@ async def create_or_update_dns_record(ingress, action):
         dns_operations_total.labels(operation=action, status='error', provider=provider_name).inc()
         dns_errors_total.labels(operation=action, error_type=type(e).__name__, provider=provider_name).inc()
 
-        logger.error(f"[{provider_name}] Error {'creating' if action == 'create' else 'updating'} DNS record {domain}: {e}")
+        action_verb = 'creating' if action == 'create' else 'updating'
+        logger.error(f"[{provider_name}] Error {action_verb} DNS record {domain}: {e}")
 
 
 async def delete_dns_record(ingress):
