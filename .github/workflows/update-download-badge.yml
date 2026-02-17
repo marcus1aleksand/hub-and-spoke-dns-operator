@@ -1,0 +1,74 @@
+name: Update Download Badge
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Daily at 06:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get download count from GitHub Packages API
+        id: downloads
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Try the packages versions API first
+          TOTAL=$(gh api \
+            '/users/${{ github.repository_owner }}/packages/container/hub-and-spoke-dns-operator/versions' \
+            --paginate \
+            --jq 'map(.metadata.download_count // 0) | add' 2>/dev/null || echo "0")
+
+          # Fallback: scrape the package page
+          if [ "$TOTAL" = "0" ] || [ "$TOTAL" = "null" ]; then
+            PAGE=$(curl -sL "https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/pkgs/container/hub-and-spoke-dns-operator")
+            TOTAL=$(echo "$PAGE" | grep -oP 'Total downloads.*?>([\d,]+)' | grep -oP '[\d,]+' | tr -d ',' | head -1)
+          fi
+
+          if [ -z "$TOTAL" ] || [ "$TOTAL" = "0" ] || [ "$TOTAL" = "null" ]; then
+            echo "Could not determine download count, skipping update"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Format nicely
+          if [ "$TOTAL" -ge 1000000 ]; then
+            FORMATTED="$(echo "scale=1; $TOTAL / 1000000" | bc)M"
+          elif [ "$TOTAL" -ge 1000 ]; then
+            FORMATTED="$(echo "scale=1; $TOTAL / 1000" | bc)k"
+          else
+            FORMATTED="$TOTAL"
+          fi
+          FORMATTED=$(echo "$FORMATTED" | sed 's/\.0\([kM]\)/\1/')
+
+          echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
+          echo "formatted=${FORMATTED}%2B" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "Download count: $TOTAL (${FORMATTED}+)"
+
+      - name: Update badge in README.md and docs/index.md
+        if: steps.downloads.outputs.skip != 'true'
+        run: |
+          FORMATTED="${{ steps.downloads.outputs.formatted }}"
+          for f in README.md docs/index.md; do
+            if [ -f "$f" ]; then
+              sed -i -E "s|img\.shields\.io/badge/Downloads-[^-]+-blue|img.shields.io/badge/Downloads-${FORMATTED}-blue|g" "$f"
+            fi
+          done
+
+      - name: Commit and push if changed
+        if: steps.downloads.outputs.skip != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md docs/index.md
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "chore: update download badge count [skip ci]"
+          git push
