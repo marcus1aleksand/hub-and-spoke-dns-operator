@@ -1,15 +1,94 @@
-site_name: "Azure Hub and Spoke DNS Operator"
-
+site_name: Hub and Spoke DNS Operator
+site_url: https://marcus1aleksand.github.io/hub-and-spoke-dns-operator/
+site_description: A multi-cloud Kubernetes operator that automatically manages DNS records for Ingress resources
+site_author: Marcus Aleks
 repo_url: https://github.com/marcus1aleksand/hub-and-spoke-dns-operator
-
-nav:
-  - Docs: index.md
+repo_name: marcus1aleksand/hub-and-spoke-dns-operator
+edit_uri: edit/main/docs/
 
 theme:
   name: material
   icon:
-    repo: fontawesome/brands/git-alt
+    repo: fontawesome/brands/github
+    logo: material/dns
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+  font:
+    text: Inter
+    code: JetBrains Mono
 
 plugins:
-  - mermaid2
   - search
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/marcus1aleksand
+  generator: false
+
+copyright: Copyright &copy; 2024-2026 Marcus Aleks
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Quick Start: quickstart.md
+    - Architecture: architecture.md
+  - Cloud Providers:
+    - Overview: providers.md
+    - Azure DNS: azure-setup.md
+    - Google Cloud DNS: gcp-setup.md
+    - AWS Route53: aws-setup.md
+  - Reference:
+    - Configuration: configuration.md
+    - Metrics & Monitoring: metrics.md
+    - Troubleshooting: troubleshooting.md
+  - Contributing: contributing.md
