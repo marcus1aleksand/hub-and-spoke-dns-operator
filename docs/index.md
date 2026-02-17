@@ -1,6 +1,6 @@
 # Hub and Spoke DNS Operator
 
-[![Downloads](https://img.shields.io/github/downloads/marcus1aleksand/hub-and-spoke-dns-operator/total?style=for-the-badge&logo=github&label=Downloads)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/releases)
+[![Downloads](https://img.shields.io/badge/Downloads-2k+-blue?style=for-the-badge&logo=github&label=Downloads)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/pkgs/container/hub-and-spoke-dns-operator)
 
 Welcome to the documentation for the **Hub and Spoke DNS Operator** — a multi-cloud Kubernetes operator that automatically manages DNS records for Ingress resources.
 
