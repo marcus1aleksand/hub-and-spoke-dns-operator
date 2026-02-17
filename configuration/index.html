@@ -12,29 +12,31 @@
         <meta name="author" content="Marcus Aleks">
       
       
-        <link rel="canonical" href="https://marcus1aleksand.github.io/hub-and-spoke-dns-operator/">
+        <link rel="canonical" href="https://marcus1aleksand.github.io/hub-and-spoke-dns-operator/configuration/">
       
       
+        <link rel="prev" href="../aws-setup/">
       
-        <link rel="next" href="quickstart/">
+      
+        <link rel="next" href="../metrics/">
       
       
         
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Hub and Spoke DNS Operator</title>
+        <title>Configuration - Hub and Spoke DNS Operator</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,7 +55,7 @@
       
     
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#hub-and-spoke-dns-operator" class="md-skip">
+        <a href="#configuration-reference" class="md-skip">
           Skip to content
         </a>
       
@@ -92,7 +94,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="Hub and Spoke DNS Operator" class="md-header__button md-logo" aria-label="Hub and Spoke DNS Operator" data-md-component="logo">
+    <a href=".." title="Hub and Spoke DNS Operator" class="md-header__button md-logo" aria-label="Hub and Spoke DNS Operator" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 9a2 2 0 0 1-2-2 2 2 0 0 1 2-2 2 2 0 0 1 2 2 2 2 0 0 1-2 2m13-6H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1M7 19a2 2 0 0 1-2-2 2 2 0 0 1 2-2 2 2 0 0 1 2 2 2 2 0 0 1-2 2m13-6H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1"/></svg>
@@ -112,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Configuration
             
           </span>
         </div>
@@ -223,11 +225,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="." class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
         
   
   
@@ -248,7 +248,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="quickstart/" class="md-tabs__link">
+        <a href="../quickstart/" class="md-tabs__link">
           
   
   
@@ -268,7 +268,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="providers/" class="md-tabs__link">
+        <a href="../providers/" class="md-tabs__link">
           
   
   
@@ -284,11 +284,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="configuration/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
           
   
   
@@ -306,7 +308,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="contributing/" class="md-tabs__link">
+      <a href="../contributing/" class="md-tabs__link">
         
   
   
@@ -330,9 +332,7 @@
           
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -343,7 +343,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="Hub and Spoke DNS Operator" class="md-nav__button md-logo" aria-label="Hub and Spoke DNS Operator" data-md-component="logo">
+    <a href=".." title="Hub and Spoke DNS Operator" class="md-nav__button md-logo" aria-label="Hub and Spoke DNS Operator" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 9a2 2 0 0 1-2-2 2 2 0 0 1 2-2 2 2 0 0 1 2 2 2 2 0 0 1-2 2m13-6H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1M7 19a2 2 0 0 1-2-2 2 2 0 0 1 2-2 2 2 0 0 1 2 2 2 2 0 0 1-2 2m13-6H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1"/></svg>
@@ -370,37 +370,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Home
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -416,153 +389,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#hub-and-spoke-dns-operator_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Hub and Spoke DNS Operator
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key Features
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Key Features">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#multi-cloud-support" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Multi-Cloud Support
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#event-driven" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Event-Driven
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#secure-by-default" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Secure by Default
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#observable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Observable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#helm-ready" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Helm-Ready
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#flexible-ip-override" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flexible IP Override
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        How It Works
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-install" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick Install
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#supported-providers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Supported Providers
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -626,7 +452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="quickstart/" class="md-nav__link">
+      <a href="../quickstart/" class="md-nav__link">
         
   
   
@@ -654,7 +480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/" class="md-nav__link">
+      <a href="../architecture/" class="md-nav__link">
         
   
   
@@ -741,7 +567,7 @@
   
   
     <li class="md-nav__item">
-      <a href="providers/" class="md-nav__link">
+      <a href="../providers/" class="md-nav__link">
         
   
   
@@ -769,7 +595,7 @@
   
   
     <li class="md-nav__item">
-      <a href="azure-setup/" class="md-nav__link">
+      <a href="../azure-setup/" class="md-nav__link">
         
   
   
@@ -797,7 +623,7 @@
   
   
     <li class="md-nav__item">
-      <a href="gcp-setup/" class="md-nav__link">
+      <a href="../gcp-setup/" class="md-nav__link">
         
   
   
@@ -825,7 +651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="aws-setup/" class="md-nav__link">
+      <a href="../aws-setup/" class="md-nav__link">
         
   
   
@@ -857,26 +683,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -894,7 +725,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -909,10 +740,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="configuration/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -928,6 +786,92 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#common-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Values
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-account" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service Account
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#azure-dns-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure DNS Values
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#google-cloud-dns-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Google Cloud DNS Values
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aws-route53-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS Route53 Values
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-valuesyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example values.yaml
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -940,7 +884,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metrics/" class="md-nav__link">
+      <a href="../metrics/" class="md-nav__link">
         
   
   
@@ -968,7 +912,7 @@
   
   
     <li class="md-nav__item">
-      <a href="troubleshooting/" class="md-nav__link">
+      <a href="../troubleshooting/" class="md-nav__link">
         
   
   
@@ -1003,7 +947,7 @@
   
   
     <li class="md-nav__item">
-      <a href="contributing/" class="md-nav__link">
+      <a href="../contributing/" class="md-nav__link">
         
   
   
@@ -1031,8 +975,6 @@
             
             
               
-                
-              
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -1052,10 +994,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#hub-and-spoke-dns-operator_1" class="md-nav__link">
+  <a href="#common-values" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hub and Spoke DNS Operator
+        Common Values
       
     </span>
   </a>
@@ -1063,93 +1005,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-features" class="md-nav__link">
+  <a href="#service-account" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key Features
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Key Features">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#multi-cloud-support" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Multi-Cloud Support
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#event-driven" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Event-Driven
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#secure-by-default" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Secure by Default
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#observable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Observable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#helm-ready" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Helm-Ready
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#flexible-ip-override" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flexible IP Override
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        How It Works
+        Service Account
       
     </span>
   </a>
@@ -1157,10 +1016,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-install" class="md-nav__link">
+  <a href="#azure-dns-values" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Install
+        Azure DNS Values
       
     </span>
   </a>
@@ -1168,10 +1027,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#supported-providers" class="md-nav__link">
+  <a href="#google-cloud-dns-values" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Supported Providers
+        Google Cloud DNS Values
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aws-route53-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS Route53 Values
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-valuesyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example values.yaml
       
     </span>
   </a>
@@ -1192,163 +1073,267 @@
               <article class="md-content__inner md-typeset">
                 
                   
-  
-
 
 
   
   
 
 
-<style>
-.md-typeset h1 {
-  display: none;
-}
-.hero {
-  text-align: center;
-  padding: 2rem 0 1rem;
-}
-.hero h2 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-.hero p.subtitle {
-  font-size: 1.2rem;
-  opacity: 0.8;
-  max-width: 700px;
-  margin: 0 auto 1.5rem;
-}
-.badges {
-  margin-bottom: 2rem;
-}
-.badges img {
-  margin: 2px;
-}
-.grid-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  margin: 2rem 0;
-}
-.grid-card {
-  border: 1px solid var(--md-default-fg-color--lightest);
-  border-radius: 8px;
-  padding: 1.5rem;
-  transition: box-shadow 0.2s;
-}
-.grid-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.grid-card h3 {
-  margin-top: 0;
-}
-</style>
-
-<div class="hero">
-<h1 id="hub-and-spoke-dns-operator">Hub and Spoke DNS Operator<a class="headerlink" href="#hub-and-spoke-dns-operator" title="Permanent link">&para;</a></h1>
-<h2 id="hub-and-spoke-dns-operator_1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 9a2 2 0 0 1-2-2 2 2 0 0 1 2-2 2 2 0 0 1 2 2 2 2 0 0 1-2 2m13-6H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1M7 19a2 2 0 0 1-2-2 2 2 0 0 1 2-2 2 2 0 0 1 2 2 2 2 0 0 1-2 2m13-6H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1"/></svg></span> Hub and Spoke DNS Operator<a class="headerlink" href="#hub-and-spoke-dns-operator_1" title="Permanent link">&para;</a></h2>
-<p class="subtitle">
-A multi-cloud Kubernetes operator that automatically manages DNS records for Ingress resources — purpose-built for hub-and-spoke network architectures.
-</p>
-<div class="badges">
-
-[![Helm Version](https://img.shields.io/badge/Helm_Chart-v0.2.0-blue?style=for-the-badge&amp;logo=helm)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/releases)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/blob/main/LICENSE)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-1.28+-326CE5?style=for-the-badge&amp;logo=kubernetes&amp;logoColor=white)](https://kubernetes.io)
-[![Python](https://img.shields.io/badge/Python-3.14-3776AB?style=for-the-badge&amp;logo=python&amp;logoColor=white)](https://python.org)
-
-</div>
-<p><a class="md-button md-button--primary" href="quickstart/">Get Started <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg></span></a>
-<a class="md-button" href="https://github.com/marcus1aleksand/hub-and-spoke-dns-operator">View on GitHub <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg></span></a></p>
-</div>
-<hr />
-<h2 id="key-features"><img alt="⚡" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/26a1.svg" title=":zap:" /> Key Features<a class="headerlink" href="#key-features" title="Permanent link">&para;</a></h2>
-<div class="grid-cards">
-<div class="grid-card">
-<h3 id="multi-cloud-support"><img alt="☁" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2601.svg" title=":cloud:" /> Multi-Cloud Support<a class="headerlink" href="#multi-cloud-support" title="Permanent link">&para;</a></h3>
-<p>Manage DNS records across <strong>Azure DNS</strong>, <strong>Google Cloud DNS</strong>, and <strong>AWS Route53</strong> with a single operator deployment.</p>
-</div>
-<div class="grid-card">
-<h3 id="event-driven"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 15H6l7-14v8h5l-7 14z"/></svg></span> Event-Driven<a class="headerlink" href="#event-driven" title="Permanent link">&para;</a></h3>
-<p>Watches Kubernetes Ingress events in real-time — DNS records are created, updated, and deleted automatically.</p>
-</div>
-<div class="grid-card">
-<h3 id="secure-by-default"><img alt="🛡" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f6e1.svg" title=":shield:" /> Secure by Default<a class="headerlink" href="#secure-by-default" title="Permanent link">&para;</a></h3>
-<p>Uses managed identities, IRSA, and workload identity. No hardcoded credentials. Minimal RBAC. Non-root container.</p>
-</div>
-<div class="grid-card">
-<h3 id="observable"><img alt="📊" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f4ca.svg" title=":bar_chart:" /> Observable<a class="headerlink" href="#observable" title="Permanent link">&para;</a></h3>
-<p>Built-in Prometheus metrics for operations, latency, and error tracking. ServiceMonitor support included.</p>
-</div>
-<div class="grid-card">
-<h3 id="helm-ready"><img alt="📦" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f4e6.svg" title=":package:" /> Helm-Ready<a class="headerlink" href="#helm-ready" title="Permanent link">&para;</a></h3>
-<p>Production-ready Helm chart with full configurability. Install in one command from GHCR.</p>
-</div>
-<div class="grid-card">
-<h3 id="flexible-ip-override"><img alt="⚙" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2699.svg" title=":gear:" /> Flexible IP Override<a class="headerlink" href="#flexible-ip-override" title="Permanent link">&para;</a></h3>
-<p>Use a custom IP (e.g., firewall NAT IP) instead of the Ingress load balancer IP for hub-and-spoke topologies.</p>
-</div>
-</div>
-<h2 id="how-it-works"><img alt="🤔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f914.svg" title=":thinking:" /> How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
-<p>The operator is designed for <strong>hub-and-spoke network topologies</strong> where Kubernetes clusters run in spoke networks behind a central hub firewall with NAT rules.</p>
-<pre class="mermaid"><code>graph LR
-    ING["☸️ Ingress Event"] --&gt; OP["⚙️ DNS Operator"]
-    OP --&gt; |Azure| AZ["Azure DNS"]
-    OP --&gt; |GCP| GC["Cloud DNS"]
-    OP --&gt; |AWS| R53["Route53"]
-
-    style OP fill:#e8f4f8,stroke:#2196F3,stroke-width:2px
-    style AZ fill:#0078d4,color:#fff,stroke:#0078d4
-    style GC fill:#4285f4,color:#fff,stroke:#4285f4
-    style R53 fill:#ff9900,color:#fff,stroke:#ff9900</code></pre>
-<ol>
-<li><strong>Watch</strong> — The operator watches all Ingress resources in the cluster</li>
-<li><strong>Detect</strong> — When an Ingress is created, modified, or deleted, the operator captures the event</li>
-<li><strong>Resolve IP</strong> — Uses either the Ingress load balancer IP or a configured <code>customIP</code></li>
-<li><strong>Sync DNS</strong> — Creates, updates, or deletes the corresponding A record in your cloud DNS provider</li>
-</ol>
-<h2 id="quick-install"><img alt="🚀" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f680.svg" title=":rocket:" /> Quick Install<a class="headerlink" href="#quick-install" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>helm<span class="w"> </span>install<span class="w"> </span>dns-operator<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>oci://ghcr.io/marcus1aleksand/helm-charts/hub-and-spoke-dns-operator<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span>--set<span class="w"> </span><span class="nv">cloudProvider</span><span class="o">=</span>azure<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span>--set<span class="w"> </span>azure.subscriptionId<span class="o">=</span><span class="s2">&quot;your-sub-id&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span>--set<span class="w"> </span>azure.dnsZone<span class="o">=</span><span class="s2">&quot;example.com&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span>--set<span class="w"> </span>azure.dnsResourceGroup<span class="o">=</span><span class="s2">&quot;rg-dns&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span>--set<span class="w"> </span><span class="nv">customIP</span><span class="o">=</span><span class="s2">&quot;203.0.113.1&quot;</span>
-</span></code></pre></div>
-<p><a href="quickstart/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg></span> Full installation guide</a></p>
-<h2 id="supported-providers"><img alt="☁" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2601.svg" title=":cloud:" /> Supported Providers<a class="headerlink" href="#supported-providers" title="Permanent link">&para;</a></h2>
+<h1 id="configuration-reference">Configuration Reference<a class="headerlink" href="#configuration-reference" title="Permanent link">&para;</a></h1>
+<p>Complete reference for all Helm chart values.</p>
+<h2 id="common-values">Common Values<a class="headerlink" href="#common-values" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Provider</th>
-<th>Service</th>
-<th>Auth Method</th>
-<th>Status</th>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Azure</strong></td>
-<td>Azure DNS Zones</td>
-<td>Managed Identity / Workload Identity</td>
-<td><img alt="✅" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2705.svg" title=":white_check_mark:" /> Stable</td>
+<td><code>cloudProvider</code></td>
+<td>string</td>
+<td><code>azure</code></td>
+<td>Cloud provider: <code>azure</code>, <code>gcp</code>, or <code>aws</code></td>
 </tr>
 <tr>
-<td><strong>GCP</strong></td>
-<td>Cloud DNS</td>
-<td>Service Account / Workload Identity</td>
-<td><img alt="✅" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2705.svg" title=":white_check_mark:" /> Stable</td>
+<td><code>customIP</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>Override IP for DNS records (e.g., firewall public IP)</td>
 </tr>
 <tr>
-<td><strong>AWS</strong></td>
-<td>Route53</td>
-<td>IRSA / IAM Roles</td>
-<td><img alt="✅" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2705.svg" title=":white_check_mark:" /> Stable</td>
+<td><code>customTTL</code></td>
+<td>int</td>
+<td><code>300</code></td>
+<td>TTL for DNS records in seconds</td>
+</tr>
+<tr>
+<td><code>replicaCount</code></td>
+<td>int</td>
+<td><code>1</code></td>
+<td>Number of operator replicas</td>
+</tr>
+<tr>
+<td><code>image.repository</code></td>
+<td>string</td>
+<td><code>ghcr.io/marcus1aleksand/hub-and-spoke-dns-operator</code></td>
+<td>Container image</td>
+</tr>
+<tr>
+<td><code>image.pullPolicy</code></td>
+<td>string</td>
+<td><code>Always</code></td>
+<td>Image pull policy</td>
+</tr>
+<tr>
+<td><code>imageCredentials</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>Image pull secret</td>
+</tr>
+<tr>
+<td><code>fullnameOverride</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>Override the full resource name</td>
+</tr>
+<tr>
+<td><code>nameOverride</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>Override the chart name</td>
+</tr>
+<tr>
+<td><code>metrics.enabled</code></td>
+<td>bool</td>
+<td><code>true</code></td>
+<td>Enable Prometheus metrics endpoint</td>
+</tr>
+<tr>
+<td><code>metrics.serviceMonitor.enabled</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>Create ServiceMonitor for Prometheus Operator</td>
 </tr>
 </tbody>
 </table>
+<h2 id="service-account">Service Account<a class="headerlink" href="#service-account" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>serviceAccount.create</code></td>
+<td>bool</td>
+<td><code>true</code></td>
+<td>Create a service account</td>
+</tr>
+<tr>
+<td><code>serviceAccount.name</code></td>
+<td>string</td>
+<td><code>dnsoperator</code></td>
+<td>Service account name</td>
+</tr>
+<tr>
+<td><code>deployment.automountServiceAccountToken</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>Automount SA token</td>
+</tr>
+</tbody>
+</table>
+<h2 id="azure-dns-values">Azure DNS Values<a class="headerlink" href="#azure-dns-values" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>azure.subscriptionId</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>Azure subscription ID</td>
+</tr>
+<tr>
+<td><code>azure.dnsZone</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>DNS zone name (e.g., <code>example.com</code>)</td>
+</tr>
+<tr>
+<td><code>azure.dnsResourceGroup</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>Resource group containing the DNS zone</td>
+</tr>
+<tr>
+<td><code>azure.managedIdentityClientId</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>Managed Identity client ID</td>
+</tr>
+</tbody>
+</table>
+<h2 id="google-cloud-dns-values">Google Cloud DNS Values<a class="headerlink" href="#google-cloud-dns-values" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gcp.projectId</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>GCP project ID</td>
+</tr>
+<tr>
+<td><code>gcp.managedZone</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>Cloud DNS managed zone name</td>
+</tr>
+<tr>
+<td><code>gcp.dnsZone</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>DNS zone domain (e.g., <code>example.com</code>)</td>
+</tr>
+<tr>
+<td><code>gcp.serviceAccountKey</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>K8s secret name containing GCP SA key</td>
+</tr>
+</tbody>
+</table>
+<h2 id="aws-route53-values">AWS Route53 Values<a class="headerlink" href="#aws-route53-values" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>aws.hostedZoneId</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>Route53 hosted zone ID</td>
+</tr>
+<tr>
+<td><code>aws.dnsZone</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>DNS zone domain (e.g., <code>example.com</code>)</td>
+</tr>
+<tr>
+<td><code>aws.region</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>AWS region</td>
+</tr>
+<tr>
+<td><code>aws.accessKeyId</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>AWS access key (dev only)</td>
+</tr>
+<tr>
+<td><code>aws.secretAccessKey</code></td>
+<td>string</td>
+<td><code>""</code></td>
+<td>AWS secret key (dev only)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Production Security</p>
+<p>Never use <code>aws.accessKeyId</code> / <code>aws.secretAccessKey</code> in production. Use IRSA (IAM Roles for Service Accounts) instead.</p>
+</div>
+<h2 id="example-valuesyaml">Example values.yaml<a class="headerlink" href="#example-valuesyaml" title="Permanent link">&para;</a></h2>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">cloudProvider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">customIP</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;203.0.113.1&quot;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nt">customTTL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nt">replicaCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nt">azure</span><span class="p">:</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nt">subscriptionId</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;00000000-0000-0000-0000-000000000000&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">dnsZone</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;example.com&quot;</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">dnsResourceGroup</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;rg-dns&quot;</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nt">managedIdentityClientId</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;00000000-0000-0000-0000-000000000000&quot;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="nt">metrics</span><span class="p">:</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span><span class="nt">serviceMonitor</span><span class="p">:</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="nt">serviceAccount</span><span class="p">:</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">  </span><span class="nt">create</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dnsoperator&quot;</span>
+</span></code></pre></div>
 
 
 
@@ -1356,13 +1341,8 @@ A multi-cloud Kubernetes operator that automatically manages DNS records for Ing
 
 
 
-  
-  
 
 
-
-
-  
 
 
 
@@ -1388,19 +1368,33 @@ A multi-cloud Kubernetes operator that automatically manages DNS records for Ing
   
     
       
-        
-      
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../aws-setup/" class="md-footer__link md-footer__link--prev" aria-label="Previous: AWS Route53">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                AWS Route53
+              </div>
+            </div>
+          </a>
         
         
           
-          <a href="quickstart/" class="md-footer__link md-footer__link--next" aria-label="Next: Quick Start">
+          <a href="../metrics/" class="md-footer__link md-footer__link--next" aria-label="Next: Metrics &amp; Monitoring">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Quick Start
+                Metrics & Monitoring
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1452,10 +1446,10 @@ A multi-cloud Kubernetes operator that automatically manages DNS records for Ing
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
