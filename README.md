@@ -1,302 +1,326 @@
-# hub-and-spoke-dns-operator
+<div align="center">
 
-![Version: 0.0.3](https://img.shields.io/badge/Version-0.0.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.3](https://img.shields.io/badge/AppVersion-0.0.3-informational?style=flat-square)
+# 🌐 Hub and Spoke DNS Operator
 
-The Azure Hub and Spoke DNS Operator is an event-based DNS record operator tool designed for a specific use case within Kubernetes environments. It manages Kubernetes influxes fronted by a firewall in a Hub Network and having NAT rules to direct traffic to Kubernetes Influxes in a Spoke Network.
+**Automatically manage DNS records across Azure, GCP, and AWS from your Kubernetes Ingress resources.**
 
-This operator monitors Kubernetes events for Ingress resource creation, updates, or deletion and then creates a Type A DNS record in the target DNS zone. It can set the IP associated with the Ingress resource or a "customIP" parameter defined in the helm chart provided with this operator.
+[![Helm Version](https://img.shields.io/badge/Helm_Chart-v0.2.0-blue?style=for-the-badge&logo=helm)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/releases)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-1.28+-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io)
+[![Python](https://img.shields.io/badge/Python-3.14-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+
+[![Build & Test](https://img.shields.io/github/actions/workflow/status/marcus1aleksand/hub-and-spoke-dns-operator/build_test.yml?branch=main&label=Build%20%26%20Test&style=flat-square)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/actions/workflows/build_test.yml)
+[![Lint & Scan](https://img.shields.io/github/actions/workflow/status/marcus1aleksand/hub-and-spoke-dns-operator/linting_scanning.yml?branch=main&label=Lint%20%26%20Scan&style=flat-square)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/actions/workflows/linting_scanning.yml)
+[![Unit Tests](https://img.shields.io/github/actions/workflow/status/marcus1aleksand/hub-and-spoke-dns-operator/unit_tests.yml?branch=main&label=Unit%20Tests&style=flat-square)](https://github.com/marcus1aleksand/hub-and-spoke-dns-operator/actions/workflows/unit_tests.yml)
+
+---
+
+*A Kubernetes operator that watches Ingress events and automatically creates, updates, and deletes DNS A records in your cloud provider's DNS service — purpose-built for hub-and-spoke network architectures.*
+
+</div>
+
+## 🏗️ Architecture
+
+The operator is designed for hub-and-spoke network topologies where Kubernetes clusters run in spoke networks behind a central hub firewall with NAT rules.
 
 ```mermaid
-graph TD
-    A[User] --> B[Firewall<br>Public IP NAT]
-    B --> C[Hub Network]
-    C --> D[Spoke Network 1]
-    C --> E[Spoke Network 2]
-    D --> F[Kubernetes Cluster 1]
-    E --> G[Kubernetes Cluster 2]
-    F --> H[Ingress 1]
-    G --> I[Ingress 2]
+graph TB
+    subgraph Internet
+        USER[("🌍 Users")]
+    end
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#ccf,stroke:#333,stroke-width:2px
-    style C fill:#ccf,stroke:#333,stroke-width:2px
-    style D fill:#ccf,stroke:#333,stroke-width:2px
-    style E fill:#ccf,stroke:#333,stroke-width:2px
-    style F fill:#ffc,stroke:#333,stroke-width:2px
-    style G fill:#ffc,stroke:#333,stroke-width:2px
-    style H fill:#ffc,stroke:#333,stroke-width:2px
-    style I fill:#ffc,stroke:#333,stroke-width:2px
+    subgraph Hub["🔒 Hub Network"]
+        FW["🛡️ Firewall / NAT Gateway<br/>Public IP: 203.0.113.1"]
+    end
+
+    subgraph Spoke1["📡 Spoke Network 1"]
+        K8S1["☸️ Kubernetes Cluster"]
+        ING1["Ingress: app1.example.com"]
+    end
+
+    subgraph Spoke2["📡 Spoke Network 2"]
+        K8S2["☸️ Kubernetes Cluster"]
+        ING2["Ingress: app2.example.com"]
+    end
+
+    subgraph DNS["☁️ Cloud DNS"]
+        AZURE["Azure DNS Zone"]
+        GCP["Google Cloud DNS"]
+        AWS["AWS Route53"]
+    end
+
+    subgraph Operator["⚙️ DNS Operator"]
+        OP["hub-and-spoke-dns-operator<br/>Watches Ingress Events"]
+    end
+
+    USER --> FW
+    FW --> K8S1
+    FW --> K8S2
+    K8S1 --> ING1
+    K8S2 --> ING2
+
+    OP -.->|"watches"| ING1
+    OP -.->|"watches"| ING2
+    OP ==>|"creates/updates/deletes<br/>A records"| AZURE
+    OP ==>|"creates/updates/deletes<br/>A records"| GCP
+    OP ==>|"creates/updates/deletes<br/>A records"| AWS
+
+    style Hub fill:#e8f4f8,stroke:#2196F3,stroke-width:2px
+    style Spoke1 fill:#fff3e0,stroke:#FF9800,stroke-width:2px
+    style Spoke2 fill:#fff3e0,stroke:#FF9800,stroke-width:2px
+    style DNS fill:#e8f5e9,stroke:#4CAF50,stroke-width:2px
+    style Operator fill:#fce4ec,stroke:#E91E63,stroke-width:2px
+    style Internet fill:#f3e5f5,stroke:#9C27B0,stroke-width:2px
 ```
 
-## Helm-chart Description
+### How It Works
 
-A Helm chart for the Hub and Spoke DNS Kubernetes DNS Operator
+1. **Watch** — The operator watches all Ingress resources in the cluster via Kubernetes API
+2. **Detect** — When an Ingress is created, modified, or deleted, the operator captures the event
+3. **Resolve IP** — Uses either the Ingress load balancer IP or a configured `customIP` (e.g., firewall public IP)
+4. **Sync DNS** — Creates, updates, or deletes the corresponding A record in your cloud DNS provider
+5. **Observe** — Exposes Prometheus metrics for monitoring operations, latency, and errors
 
-## Maintainers
+## ✨ Features
 
-| Name | Email | Url |
-| ---- | ------ | --- |
-| Marcus Aleks | <marcus@aleksand.com> | <https://github.com/marcus1aleksand> |
+| Feature | Description |
+|---------|-------------|
+| **☁️ Multi-Cloud** | Azure DNS, Google Cloud DNS, and AWS Route53 support |
+| **⚡ Event-Driven** | Real-time DNS updates via Kubernetes event watching |
+| **🔄 Custom IP Override** | Use a custom IP (e.g., firewall NAT IP) instead of ingress IP |
+| **📊 Prometheus Metrics** | Built-in metrics for operations, latency, and error tracking |
+| **🏥 Health Checks** | Liveness and readiness probes for reliable operations |
+| **🔐 Secure by Default** | Managed identity / IAM role support, no hardcoded credentials |
+| **📦 Helm Chart** | Production-ready Helm chart with full configurability |
+| **⏱️ Configurable TTL** | Set custom TTL for DNS records |
 
-## Values
+## 🚀 Quick Start
 
-<table height="400px" >
-	<thead>
-		<th>Key</th>
-		<th>Type</th>
-		<th>Default</th>
-		<th>Description</th>
-	</thead>
-	<tbody>
-		<tr>
-			<td id="azure--dnsResourceGroup"><a href="./values.yaml#L17">azure.dnsResourceGroup</a></td>
-			<td>
-string
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-""
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="azure--dnsZone"><a href="./values.yaml#L16">azure.dnsZone</a></td>
-			<td>
-string
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-""
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="azure--managedIdentityClientId"><a href="./values.yaml#L18">azure.managedIdentityClientId</a></td>
-			<td>
-string
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-""
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="azure--subscriptionId"><a href="./values.yaml#L15">azure.subscriptionId</a></td>
-			<td>
-string
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-""
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="customIP"><a href="./values.yaml#L11">customIP</a></td>
-			<td>
-string
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-""
-</pre>
-</div>
-			</td>
-			<td>Paramater with the IP address to override the ingress assigned IP when creating the DNS record.</td>
-		</tr>
-		<tr>
-			<td id="customTTL"><a href="./values.yaml#L13">customTTL</a></td>
-			<td>
-int
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-300
-</pre>
-</div>
-			</td>
-			<td>Paramater with the TTL to be used when creating the automated DNS record.</td>
-		</tr>
-		<tr>
-			<td id="deployment--automountServiceAccountToken"><a href="./values.yaml#L9">deployment.automountServiceAccountToken</a></td>
-			<td>
-bool
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-false
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="fullnameOverride"><a href="./values.yaml#L6">fullnameOverride</a></td>
-			<td>
-string
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-""
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="image--pullPolicy"><a href="./values.yaml#L3">image.pullPolicy</a></td>
-			<td>
-string
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-"Always"
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="image--repository"><a href="./values.yaml#L2">image.repository</a></td>
-			<td>
-string
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-"ghcr.io/marcus1aleksand/hub-and-spoke-dns-operator"
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="imageCredentials"><a href="./values.yaml#L4">imageCredentials</a></td>
-			<td>
-string
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-""
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="nameOverride"><a href="./values.yaml#L5">nameOverride</a></td>
-			<td>
-string
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-""
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="replicaCount"><a href="./values.yaml#L7">replicaCount</a></td>
-			<td>
-int
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-1
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="serviceAccount--create"><a href="./values.yaml#L20">serviceAccount.create</a></td>
-			<td>
-bool
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-true
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td id="serviceAccount--name"><a href="./values.yaml#L21">serviceAccount.name</a></td>
-			<td>
-string
-</td>
-			<td>
-				<div style="max-width: 300px;">
-<pre lang="json">
-"azurednsoperator"
-</pre>
-</div>
-			</td>
-			<td></td>
-		</tr>
-	</tbody>
-</table>
+### Prerequisites
 
-## Installation
+- Kubernetes 1.28+
+- Helm 3.x
+- Cloud provider credentials configured (see provider-specific setup below)
 
-Install the hub-and-spoke-dns-operator helm chart:
+### Installation
 
 ```bash
-helm install hub-and-spoke-dns-operator oci://ghcr.io/marcus1aleksand/helm-charts/hub-and-spoke-dns-operator
+helm install dns-operator oci://ghcr.io/marcus1aleksand/helm-charts/hub-and-spoke-dns-operator
 ```
 
-## Security Checks
+## ☁️ Cloud Provider Setup
 
-Security checks in this repository are performed by a pipeline that executes Checkov whenever a Pull Request is created against the main branch.
+### Azure DNS
 
-[Checkov](https://github.com/bridgecrewio/checkov?tab=readme-ov-file) is a static code analysis tool for infrastructure as code (IaC) and also a software composition analysis (SCA) tool for images and open source packages.
+<details open>
+<summary><strong>Azure DNS Zone Configuration</strong></summary>
 
-It scans cloud infrastructure provisioned using Terraform, Terraform plan, Cloudformation, AWS SAM, Kubernetes, Helm charts, Kustomize, Dockerfile, Serverless, Bicep, OpenAPI or ARM Templates and detects security and compliance misconfigurations using graph-based scanning.
+**Prerequisites:**
+- Azure DNS Zone created
+- Managed Identity with `DNS Zone Contributor` role on the DNS Zone
 
-It performs Software Composition Analysis (SCA) scanning which is a scan of open source packages and images for Common Vulnerabilities and Exposures (CVEs).
-
-Checkov also powers Prisma Cloud Application Security, the developer-first platform that codifies and streamlines cloud security throughout the development lifecycle. Prisma Cloud identifies, fixes, and prevents misconfigurations in cloud resources and infrastructure-as-code files.
-
-## Validation Hooks
-
-This repository has pre-commit hooks configuration within it. This is utilized to run a set of validations locally such as automatically fixing formatting issues before the code is pushed to a remote branch.git s
-
-In order to have the pre-commit working in your local IDE, after cloning this repository locally, run the following commands:
-
-1. Install pre-commit locally
-```
-brew install pre-commit
+```bash
+helm install dns-operator oci://ghcr.io/marcus1aleksand/helm-charts/hub-and-spoke-dns-operator \
+  --set cloudProvider=azure \
+  --set azure.subscriptionId="your-subscription-id" \
+  --set azure.dnsZone="example.com" \
+  --set azure.dnsResourceGroup="rg-dns" \
+  --set azure.managedIdentityClientId="your-mi-client-id" \
+  --set customIP="203.0.113.1"
 ```
 
-2. After cloning this repository and having pre-commit installed in your locall computer, run the following command via CLI in the repository directory:
-```
-pre-commit install
-```
-Done! now whenever a commit command is executed, your code terraform code will be fully validated and documentation will be automatically updated before it is pushed to the remote repository's branch.
+**Authentication:** Uses Azure Managed Identity (Workload Identity). Assign the `DNS Zone Contributor` role:
 
-----------------------------------------------
-Autogenerated from chart metadata using [helm-docs v1.14.2](https://github.com/norwoodj/helm-docs/releases/v1.14.2)
+```bash
+az role assignment create \
+  --assignee <managed-identity-client-id> \
+  --role "DNS Zone Contributor" \
+  --scope /subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.Network/dnszones/<zone>
+```
+
+</details>
+
+### Google Cloud DNS
+
+<details>
+<summary><strong>Google Cloud DNS Configuration</strong></summary>
+
+**Prerequisites:**
+- Cloud DNS managed zone created
+- GCP Service Account with `dns.admin` role
+
+```bash
+helm install dns-operator oci://ghcr.io/marcus1aleksand/helm-charts/hub-and-spoke-dns-operator \
+  --set cloudProvider=gcp \
+  --set gcp.projectId="my-gcp-project" \
+  --set gcp.managedZone="my-dns-zone" \
+  --set gcp.dnsZone="example.com" \
+  --set gcp.serviceAccountKey="gcp-dns-sa-key" \
+  --set customIP="203.0.113.1"
+```
+
+**Authentication:** Create a service account and store the key as a Kubernetes secret:
+
+```bash
+# Create GCP service account
+gcloud iam service-accounts create dns-operator \
+  --display-name="DNS Operator Service Account"
+
+# Grant DNS admin role
+gcloud projects add-iam-policy-binding my-gcp-project \
+  --member="serviceAccount:dns-operator@my-gcp-project.iam.gserviceaccount.com" \
+  --role="roles/dns.admin"
+
+# Create key and store as K8s secret
+gcloud iam service-accounts keys create key.json \
+  --iam-account=dns-operator@my-gcp-project.iam.gserviceaccount.com
+
+kubectl create secret generic gcp-dns-sa-key --from-file=key.json=key.json
+```
+
+</details>
+
+### AWS Route53
+
+<details>
+<summary><strong>AWS Route53 Configuration</strong></summary>
+
+**Prerequisites:**
+- Route53 hosted zone created
+- IAM role/user with `route53:ChangeResourceRecordSets` and `route53:ListResourceRecordSets` permissions
+
+```bash
+helm install dns-operator oci://ghcr.io/marcus1aleksand/helm-charts/hub-and-spoke-dns-operator \
+  --set cloudProvider=aws \
+  --set aws.hostedZoneId="Z1234567890ABC" \
+  --set aws.dnsZone="example.com" \
+  --set aws.region="us-east-1" \
+  --set customIP="203.0.113.1"
+```
+
+**Authentication:** Use IAM Roles for Service Accounts (IRSA) for production:
+
+```bash
+# Create IAM policy
+cat > dns-policy.json <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "route53:ChangeResourceRecordSets",
+        "route53:ListResourceRecordSets"
+      ],
+      "Resource": "arn:aws:route53:::hostedzone/Z1234567890ABC"
+    }
+  ]
+}
+EOF
+
+aws iam create-policy --policy-name DNSOperatorPolicy --policy-document file://dns-policy.json
+
+# Associate with K8s service account via IRSA
+eksctl create iamserviceaccount \
+  --name dnsoperator \
+  --namespace default \
+  --cluster my-cluster \
+  --attach-policy-arn arn:aws:iam::123456789012:policy/DNSOperatorPolicy \
+  --approve
+```
+
+</details>
+
+## 🔧 Configuration Reference
+
+### Common Values
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `cloudProvider` | Cloud provider: `azure`, `gcp`, `aws` | `azure` |
+| `customIP` | Override IP for DNS records (e.g., firewall IP) | `""` |
+| `customTTL` | TTL for DNS records (seconds) | `300` |
+| `replicaCount` | Number of operator replicas | `1` |
+| `metrics.enabled` | Enable Prometheus metrics | `true` |
+| `metrics.serviceMonitor.enabled` | Create ServiceMonitor for Prometheus Operator | `false` |
+
+### Provider Comparison
+
+| Feature | Azure DNS | Google Cloud DNS | AWS Route53 |
+|---------|-----------|------------------|-------------|
+| **Auth Method** | Managed Identity | Service Account Key / Workload Identity | IRSA / Access Keys |
+| **Record Types** | A records | A records | A records |
+| **Zone Type** | Public DNS Zone | Managed Zone | Hosted Zone |
+| **Required Role** | DNS Zone Contributor | roles/dns.admin | route53:Change/ListResourceRecordSets |
+
+## 📊 Metrics
+
+The operator exposes Prometheus metrics on port `8080` at `/metrics`:
+
+| Metric | Type | Description |
+|--------|------|-------------|
+| `dns_operator_operations_total` | Counter | Total DNS operations (by operation, status, provider) |
+| `dns_operator_operation_duration_seconds` | Histogram | Duration of DNS operations |
+| `dns_operator_errors_total` | Counter | DNS operation errors (by type) |
+| `dns_operator_records_managed` | Gauge | Currently managed DNS records |
+| `dns_operator_info` | Gauge | Operator metadata (zone, provider, version) |
+
+## 🛡️ Security
+
+- **No hardcoded credentials** — Uses managed identities, IRSA, and workload identity
+- **Checkov scanning** — IaC security scanning on all PRs
+- **Pre-commit hooks** — Automated validation before commits
+- **Minimal RBAC** — ClusterRole limited to Ingress read access
+- **Non-root container** — Runs with restricted security context
+
+## 📁 Project Structure
+
+```
+hub-and-spoke-dns-operator/
+├── operator/                    # Python operator source
+│   ├── main.py                  # Main operator logic
+│   ├── providers/               # Cloud DNS provider implementations
+│   │   ├── base.py              # Abstract base provider
+│   │   ├── azure.py             # Azure DNS provider
+│   │   ├── gcp.py               # Google Cloud DNS provider
+│   │   └── aws.py               # AWS Route53 provider
+│   ├── test_main.py             # Unit tests
+│   ├── Dockerfile               # Container image
+│   └── requirements.txt         # Python dependencies
+├── charts/                      # Helm chart
+│   ├── Chart.yaml
+│   ├── values.yaml
+│   └── templates/
+├── docs/                        # Documentation
+│   ├── architecture.md          # Architecture deep-dive
+│   ├── azure-setup.md           # Azure setup guide
+│   ├── gcp-setup.md             # GCP setup guide
+│   └── aws-setup.md             # AWS setup guide
+└── secrets-injector/            # External secrets integration
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Install pre-commit hooks: `brew install pre-commit && pre-commit install`
+4. Make your changes and run tests
+5. Submit a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Maintainers
+
+| Name | GitHub |
+|------|--------|
+| Marcus Aleks | [@marcus1aleksand](https://github.com/marcus1aleksand) |
+
+---
+
+<div align="center">
+
+**⭐ If you find this project useful, please give it a star! ⭐**
+
+</div>
