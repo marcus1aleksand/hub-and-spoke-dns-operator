@@ -109,7 +109,7 @@ async def test_metrics_endpoint():
     """Test that the metrics endpoint returns Prometheus metrics"""
     request = MagicMock()
     response = await main.metrics_handler(request)
-    assert response.content_type == "text/plain; version=0.0.4; charset=utf-8"
+    assert response.content_type == "text/plain"
     body = response.body.decode('utf-8')
     assert 'dns_operator_operations_total' in body
     assert 'dns_operator_operation_duration_seconds' in body
@@ -142,3 +142,85 @@ def test_extract_record_name():
     assert p.extract_record_name("app.example.com", "example.com") == "app"
     assert p.extract_record_name("deep.sub.example.com", "example.com") == "deep.sub"
     assert p.extract_record_name("other.domain.io", "example.com") == "other.domain.io"
+
+
+# =============================================================================
+# Internal Ingress / Custom IP Tests
+# =============================================================================
+
+@pytest.mark.asyncio
+async def test_internal_ingress_uses_lb_ip(mock_provider):
+    """nginx-internal ingress should use LB IP, not CUSTOM_IP."""
+    ingress = {
+        "spec": {
+            "rules": [{"host": "internal.example.com"}],
+            "ingressClassName": "nginx-internal",
+        },
+        "metadata": {"annotations": {}},
+        "status": {"loadBalancer": {"ingress": [{"ip": "10.0.0.1"}]}},
+    }
+    await main.create_or_update_dns_record(ingress, "create")
+    mock_provider.create_or_update_record.assert_called_once_with(
+        "internal.example.com", "10.0.0.1", 300
+    )
+
+
+@pytest.mark.asyncio
+async def test_internal_ingress_annotation(mock_provider):
+    """kubernetes.io/ingress.class annotation = nginx-internal should use LB IP."""
+    ingress = {
+        "spec": {
+            "rules": [{"host": "internal.example.com"}],
+        },
+        "metadata": {"annotations": {"kubernetes.io/ingress.class": "nginx-internal"}},
+        "status": {"loadBalancer": {"ingress": [{"ip": "10.0.0.2"}]}},
+    }
+    await main.create_or_update_dns_record(ingress, "create")
+    mock_provider.create_or_update_record.assert_called_once_with(
+        "internal.example.com", "10.0.0.2", 300
+    )
+
+
+@pytest.mark.asyncio
+async def test_create_dns_record_error_handling(mock_provider):
+    """Errors during DNS creation should be caught and logged, not raised."""
+    mock_provider.create_or_update_record.side_effect = Exception("API error")
+    ingress = {
+        "spec": {"rules": [{"host": "test.example.com"}], "ingressClassName": "nginx"},
+        "metadata": {"annotations": {}},
+        "status": {"loadBalancer": {"ingress": [{"ip": "5.6.7.8"}]}},
+    }
+    # Should not raise
+    await main.create_or_update_dns_record(ingress, "create")
+
+
+@pytest.mark.asyncio
+async def test_delete_dns_record_error_handling(mock_provider):
+    """Errors during DNS deletion should be caught and logged, not raised."""
+    mock_provider.delete_record.side_effect = Exception("API error")
+    ingress = {"spec": {"rules": [{"host": "test.example.com"}]}}
+    # Should not raise
+    await main.delete_dns_record(ingress)
+
+
+@pytest.mark.asyncio
+async def test_unknown_event_type(mock_provider):
+    """Unknown event types should be silently ignored."""
+    event = {
+        "type": "BOOKMARK",
+        "object": {"spec": {"rules": [{"host": "test.example.com"}]}},
+    }
+    with patch("main.create_or_update_dns_record", new_callable=AsyncMock) as mock_create, \
+         patch("main.delete_dns_record", new_callable=AsyncMock) as mock_delete:
+        await main.ingress_event_handler(event)
+        mock_create.assert_not_called()
+        mock_delete.assert_not_called()
+
+
+def test_configure_handler():
+    """Test the kopf startup configure handler."""
+    mock_settings = MagicMock()
+    main.configure(settings=mock_settings)
+    assert mock_settings.posting.level == 30  # logging.WARNING
+    assert mock_settings.watching.connect_timeout == 60
+    assert mock_settings.watching.server_timeout == 60

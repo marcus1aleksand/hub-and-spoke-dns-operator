@@ -5,7 +5,7 @@ import asyncio
 import time
 from kubernetes import client, config
 from aiohttp import web
-from prometheus_client import Counter, Histogram, Gauge, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import Counter, Histogram, Gauge, generate_latest
 
 # Configure logging to INFO level
 logging.basicConfig(level=logging.INFO)
@@ -198,7 +198,8 @@ async def metrics_handler(request):
     """Prometheus metrics endpoint"""
     return web.Response(
         body=generate_latest(),
-        content_type=CONTENT_TYPE_LATEST
+        content_type="text/plain",
+        charset="utf-8",
     )
 
 
