@@ -1,14 +1,14 @@
-kopf==1.43.0
-kubernetes==35.0.0
-aiohttp==3.13.3
-prometheus_client==0.24.1
+kopf~=1.38.0
+kubernetes~=35.0.0
+aiohttp~=3.13.3
+prometheus_client~=0.24.0
 
 # Azure DNS provider
-azure-identity==1.25.2
-azure-mgmt-dns==9.0.0
+azure-identity~=1.25.0
+azure-mgmt-dns~=9.0.0
 
 # GCP DNS provider
-google-cloud-dns==0.35.0
+google-cloud-dns~=0.35.0
 
 # AWS DNS provider (Route53)
-boto3==1.38.0
+boto3~=1.38.0
