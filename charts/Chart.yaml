@@ -2,8 +2,8 @@ apiVersion: v2
 name: hub-and-spoke-dns-operator
 description: A multi-cloud Kubernetes operator that automatically manages DNS records for Ingress resources in hub-and-spoke network architectures. Supports Azure DNS, Google Cloud DNS, and AWS Route53.
 type: application
-version: 0.2.0
-appVersion: 0.2.0
+version: 0.2.1
+appVersion: 0.2.1
 keywords:
   - dns
   - kubernetes
