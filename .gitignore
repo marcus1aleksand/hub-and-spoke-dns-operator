@@ -38,3 +38,5 @@ override.tf.json
 .terraformrc
 terraform.rc
 .coverage
+secrets-injector
+tooling-scripts
