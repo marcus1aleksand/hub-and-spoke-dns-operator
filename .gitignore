@@ -38,3 +38,7 @@ override.tf.json
 .terraformrc
 terraform.rc
 .coverage
+
+# Nested repos (cloned separately)
+secrets-injector/
+tooling-scripts/
