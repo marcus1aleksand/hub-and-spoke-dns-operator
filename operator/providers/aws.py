@@ -1,5 +1,6 @@
 """AWS Route53 DNS provider implementation."""
 
+import asyncio
 import os
 import logging
 import boto3
@@ -26,7 +27,8 @@ class AWSDNSProvider(DNSProvider):
     async def create_or_update_record(self, record_name: str, ip_address: str, ttl: int) -> None:
         name = self.extract_record_name(record_name, self._dns_zone)
         fqdn = f"{name}.{self._dns_zone}."
-        try:
+
+        def _upsert():
             self._client.change_resource_record_sets(
                 HostedZoneId=self._hosted_zone_id,
                 ChangeBatch={
@@ -43,6 +45,9 @@ class AWSDNSProvider(DNSProvider):
                     ]
                 },
             )
+
+        try:
+            await asyncio.to_thread(_upsert)
             logger.info(f"[AWS] DNS record upserted: {name} -> {ip_address}")
         except ClientError as e:
             logger.error(f"[AWS] Error upserting DNS record {name}: {e}")
@@ -51,8 +56,8 @@ class AWSDNSProvider(DNSProvider):
     async def delete_record(self, record_name: str) -> None:
         name = self.extract_record_name(record_name, self._dns_zone)
         fqdn = f"{name}.{self._dns_zone}."
-        try:
-            # Need to get current record to delete it
+
+        def _delete():
             response = self._client.list_resource_record_sets(
                 HostedZoneId=self._hosted_zone_id,
                 StartRecordName=fqdn,
@@ -78,6 +83,9 @@ class AWSDNSProvider(DNSProvider):
                 },
             )
             logger.info(f"[AWS] DNS record deleted: {name}")
+
+        try:
+            await asyncio.to_thread(_delete)
         except ClientError as e:
             logger.error(f"[AWS] Error deleting DNS record {name}: {e}")
             raise
