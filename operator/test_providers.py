@@ -1,7 +1,7 @@
 """Tests for cloud DNS providers (Azure, GCP, AWS)."""
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
+from unittest.mock import patch, MagicMock
 
 
 # =============================================================================
@@ -79,7 +79,7 @@ class TestAzureDNSProvider:
     @pytest.mark.asyncio
     async def test_create_or_update_record(self, mock_cred, mock_client_cls):
         mock_client = MagicMock()
-        mock_client.record_sets.create_or_update = AsyncMock()
+        mock_client.record_sets.create_or_update = MagicMock()
         mock_client_cls.return_value = mock_client
 
         from providers.azure import AzureDNSProvider
@@ -96,7 +96,7 @@ class TestAzureDNSProvider:
     @pytest.mark.asyncio
     async def test_delete_record(self, mock_cred, mock_client_cls):
         mock_client = MagicMock()
-        mock_client.record_sets.delete = AsyncMock()
+        mock_client.record_sets.delete = MagicMock()
         mock_client_cls.return_value = mock_client
 
         from providers.azure import AzureDNSProvider
@@ -113,7 +113,7 @@ class TestAzureDNSProvider:
     async def test_create_record_error(self, mock_cred, mock_client_cls):
         from azure.core.exceptions import HttpResponseError
         mock_client = MagicMock()
-        mock_client.record_sets.create_or_update = AsyncMock(
+        mock_client.record_sets.create_or_update = MagicMock(
             side_effect=HttpResponseError(message="Forbidden")
         )
         mock_client_cls.return_value = mock_client
@@ -129,7 +129,7 @@ class TestAzureDNSProvider:
     async def test_delete_record_error(self, mock_cred, mock_client_cls):
         from azure.core.exceptions import HttpResponseError
         mock_client = MagicMock()
-        mock_client.record_sets.delete = AsyncMock(
+        mock_client.record_sets.delete = MagicMock(
             side_effect=HttpResponseError(message="Not found")
         )
         mock_client_cls.return_value = mock_client

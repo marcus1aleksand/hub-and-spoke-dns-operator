@@ -1,5 +1,6 @@
 """Google Cloud DNS provider implementation."""
 
+import asyncio
 import os
 import logging
 from google.cloud import dns as google_dns
@@ -27,19 +28,18 @@ class GCPDNSProvider(DNSProvider):
     async def create_or_update_record(self, record_name: str, ip_address: str, ttl: int) -> None:
         name = self.extract_record_name(record_name, self._dns_zone)
         fqdn = f"{name}.{self._dns_zone}."
-        try:
-            # Build changes: delete existing + add new
-            changes = self._zone.changes()
 
-            # Check for existing record to replace
+        def _upsert():
+            changes = self._zone.changes()
             existing = self._find_record(fqdn)
             if existing:
                 changes.delete_record_set(existing)
-
             record_set = self._zone.resource_record_set(fqdn, "A", ttl, [ip_address])
             changes.add_record_set(record_set)
             changes.create()
 
+        try:
+            await asyncio.to_thread(_upsert)
             logger.info(f"[GCP] DNS record upserted: {name} -> {ip_address}")
         except GoogleAPICallError as e:
             logger.error(f"[GCP] Error upserting DNS record {name}: {e.message}")
@@ -48,7 +48,8 @@ class GCPDNSProvider(DNSProvider):
     async def delete_record(self, record_name: str) -> None:
         name = self.extract_record_name(record_name, self._dns_zone)
         fqdn = f"{name}.{self._dns_zone}."
-        try:
+
+        def _delete():
             existing = self._find_record(fqdn)
             if existing:
                 changes = self._zone.changes()
@@ -57,6 +58,9 @@ class GCPDNSProvider(DNSProvider):
                 logger.info(f"[GCP] DNS record deleted: {name}")
             else:
                 logger.warning(f"[GCP] DNS record not found for deletion: {name}")
+
+        try:
+            await asyncio.to_thread(_delete)
         except GoogleAPICallError as e:
             logger.error(f"[GCP] Error deleting DNS record {name}: {e.message}")
             raise

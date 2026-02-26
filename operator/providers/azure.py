@@ -1,5 +1,6 @@
 """Azure DNS provider implementation."""
 
+import asyncio
 import os
 import logging
 from azure.identity import ManagedIdentityCredential
@@ -30,14 +31,18 @@ class AzureDNSProvider(DNSProvider):
 
     async def create_or_update_record(self, record_name: str, ip_address: str, ttl: int) -> None:
         name = self.extract_record_name(record_name, self._dns_zone)
-        try:
-            await self._client.record_sets.create_or_update(
+
+        def _upsert():
+            self._client.record_sets.create_or_update(
                 self._resource_group,
                 self._dns_zone,
                 name,
                 "A",
                 {"ttl": ttl, "arecords": [{"ipv4_address": ip_address}]},
             )
+
+        try:
+            await asyncio.to_thread(_upsert)
             logger.info(f"[Azure] DNS record upserted: {name} -> {ip_address}")
         except HttpResponseError as e:
             logger.error(f"[Azure] Error upserting DNS record {name}: {e.message}")
@@ -45,10 +50,14 @@ class AzureDNSProvider(DNSProvider):
 
     async def delete_record(self, record_name: str) -> None:
         name = self.extract_record_name(record_name, self._dns_zone)
-        try:
-            await self._client.record_sets.delete(
+
+        def _delete():
+            self._client.record_sets.delete(
                 self._resource_group, self._dns_zone, name, "A"
             )
+
+        try:
+            await asyncio.to_thread(_delete)
             logger.info(f"[Azure] DNS record deleted: {name}")
         except HttpResponseError as e:
             logger.error(f"[Azure] Error deleting DNS record {name}: {e.message}")
