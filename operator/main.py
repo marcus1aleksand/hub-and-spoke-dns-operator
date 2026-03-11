@@ -214,10 +214,14 @@ app.router.add_get("/metrics", metrics_handler)
 # =============================================================================
 
 async def main():
-    health_check_server = web._run_app(app, host="0.0.0.0", port=8080)  # nosec
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", 8080)
+    await site.start()
+
     kopf_operator = kopf.operator()
 
-    await asyncio.gather(health_check_server, kopf_operator)
+    await asyncio.gather(runner.cleanup(), kopf_operator)
 
 
 if __name__ == "__main__":
