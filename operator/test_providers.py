@@ -3,6 +3,8 @@
 import pytest
 from unittest.mock import patch, MagicMock
 
+from providers.base import RecordType
+
 
 # =============================================================================
 # Base Provider Tests
@@ -19,10 +21,10 @@ class TestDNSProviderBase:
             def provider_name(self):
                 return "test"
 
-            async def create_or_update_record(self, record_name, ip_address, ttl):
+            async def create_or_update_record(self, record_name, value, record_type=RecordType.A, ttl=300):
                 pass
 
-            async def delete_record(self, record_name):
+            async def delete_record(self, record_name, record_type=RecordType.A):
                 pass
 
         return ConcreteProvider()
@@ -84,7 +86,7 @@ class TestAzureDNSProvider:
 
         from providers.azure import AzureDNSProvider
         provider = AzureDNSProvider()
-        await provider.create_or_update_record("app.example.com", "1.2.3.4", 300)
+        await provider.create_or_update_record("app.example.com", "1.2.3.4", RecordType.A, 300)
 
         mock_client.record_sets.create_or_update.assert_called_once_with(
             "fake-rg", "example.com", "app", "A",
@@ -121,7 +123,7 @@ class TestAzureDNSProvider:
         from providers.azure import AzureDNSProvider
         provider = AzureDNSProvider()
         with pytest.raises(HttpResponseError):
-            await provider.create_or_update_record("app.example.com", "1.2.3.4", 300)
+            await provider.create_or_update_record("app.example.com", "1.2.3.4", RecordType.A, 300)
 
     @patch("providers.azure.DnsManagementClient")
     @patch("providers.azure.ManagedIdentityCredential")
@@ -173,7 +175,7 @@ class TestGCPDNSProvider:
 
         from providers.gcp import GCPDNSProvider
         provider = GCPDNSProvider()
-        await provider.create_or_update_record("app.example.com", "1.2.3.4", 300)
+        await provider.create_or_update_record("app.example.com", "1.2.3.4", RecordType.A, 300)
 
         mock_zone.resource_record_set.assert_called_once_with(
             "app.example.com.", "A", 300, ["1.2.3.4"]
@@ -196,7 +198,7 @@ class TestGCPDNSProvider:
 
         from providers.gcp import GCPDNSProvider
         provider = GCPDNSProvider()
-        await provider.create_or_update_record("app.example.com", "1.2.3.4", 300)
+        await provider.create_or_update_record("app.example.com", "1.2.3.4", RecordType.A, 300)
 
         mock_changes.delete_record_set.assert_called_once_with(existing_record)
         mock_changes.add_record_set.assert_called_once()
@@ -247,7 +249,7 @@ class TestGCPDNSProvider:
         from providers.gcp import GCPDNSProvider
         provider = GCPDNSProvider()
         with pytest.raises(GoogleAPICallError):
-            await provider.create_or_update_record("app.example.com", "1.2.3.4", 300)
+            await provider.create_or_update_record("app.example.com", "1.2.3.4", RecordType.A, 300)
 
 
 # =============================================================================
@@ -278,7 +280,7 @@ class TestAWSDNSProvider:
 
         from providers.aws import AWSDNSProvider
         provider = AWSDNSProvider()
-        await provider.create_or_update_record("app.example.com", "1.2.3.4", 300)
+        await provider.create_or_update_record("app.example.com", "1.2.3.4", RecordType.A, 300)
 
         mock_client.change_resource_record_sets.assert_called_once_with(
             HostedZoneId="Z1234567890",
@@ -349,7 +351,7 @@ class TestAWSDNSProvider:
         from providers.aws import AWSDNSProvider
         provider = AWSDNSProvider()
         with pytest.raises(ClientError):
-            await provider.create_or_update_record("app.example.com", "1.2.3.4", 300)
+            await provider.create_or_update_record("app.example.com", "1.2.3.4", RecordType.A, 300)
 
     @patch("providers.aws.boto3")
     @pytest.mark.asyncio

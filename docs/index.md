@@ -10,6 +10,15 @@ Welcome to the documentation for the **Hub and Spoke DNS Operator** — a multi-
 - **[Azure Setup](azure-setup.md)** — Deploy with Azure DNS Zones
 - **[GCP Setup](gcp-setup.md)** — Deploy with Google Cloud DNS
 - **[AWS Setup](aws-setup.md)** — Deploy with AWS Route53
+- **[CNAME Record Support](cname-support.md)** — Create CNAME records for external hostnames
+
+## Features
+
+- **Multi-Cloud Support** — Works with Azure DNS, GCP Cloud DNS, and AWS Route53
+- **CNAME Record Support** — Create CNAME records pointing to external hostnames
+- **Automatic DNS Management** — Automatically creates/updates/deletes DNS records based on Ingress events
+- **Prometheus Metrics** — Built-in observability with Prometheus metrics
+- **Multi-Record Type** — Supports both A records and CNAME records
 
 ## Quick Links
 

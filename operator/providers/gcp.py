@@ -6,7 +6,7 @@ import logging
 from google.cloud import dns as google_dns
 from google.api_core.exceptions import GoogleAPICallError
 
-from providers.base import DNSProvider
+from providers.base import DNSProvider, RecordType
 
 logger = logging.getLogger(__name__)
 
@@ -25,37 +25,39 @@ class GCPDNSProvider(DNSProvider):
     def provider_name(self) -> str:
         return "gcp"
 
-    async def create_or_update_record(self, record_name: str, ip_address: str, ttl: int) -> None:
+    async def create_or_update_record(self, record_name: str, value: str, record_type: RecordType = RecordType.A, ttl: int = 300) -> None:
         name = self.extract_record_name(record_name, self._dns_zone)
         fqdn = f"{name}.{self._dns_zone}."
+        record_type_str = record_type.value
 
         def _upsert():
             changes = self._zone.changes()
-            existing = self._find_record(fqdn)
+            existing = self._find_record(fqdn, record_type_str)
             if existing:
                 changes.delete_record_set(existing)
-            record_set = self._zone.resource_record_set(fqdn, "A", ttl, [ip_address])
+            record_set = self._zone.resource_record_set(fqdn, record_type_str, ttl, [value])
             changes.add_record_set(record_set)
             changes.create()
 
         try:
             await asyncio.to_thread(_upsert)
-            logger.info(f"[GCP] DNS record upserted: {name} -> {ip_address}")
+            logger.info(f"[GCP] DNS record upserted: {name} -> {value} ({record_type_str})")
         except GoogleAPICallError as e:
             logger.error(f"[GCP] Error upserting DNS record {name}: {e.message}")
             raise
 
-    async def delete_record(self, record_name: str) -> None:
+    async def delete_record(self, record_name: str, record_type: RecordType = RecordType.A) -> None:
         name = self.extract_record_name(record_name, self._dns_zone)
         fqdn = f"{name}.{self._dns_zone}."
+        record_type_str = record_type.value
 
         def _delete():
-            existing = self._find_record(fqdn)
+            existing = self._find_record(fqdn, record_type_str)
             if existing:
                 changes = self._zone.changes()
                 changes.delete_record_set(existing)
                 changes.create()
-                logger.info(f"[GCP] DNS record deleted: {name}")
+                logger.info(f"[GCP] DNS record deleted: {name} ({record_type_str})")
             else:
                 logger.warning(f"[GCP] DNS record not found for deletion: {name}")
 
@@ -65,9 +67,9 @@ class GCPDNSProvider(DNSProvider):
             logger.error(f"[GCP] Error deleting DNS record {name}: {e.message}")
             raise
 
-    def _find_record(self, fqdn: str):
-        """Find an existing A record by FQDN."""
+    def _find_record(self, fqdn: str, record_type: str):
+        """Find an existing DNS record by FQDN and type."""
         for record_set in self._zone.list_resource_record_sets():
-            if record_set.name == fqdn and record_set.record_type == "A":
+            if record_set.name == fqdn and record_set.record_type == record_type:
                 return record_set
         return None

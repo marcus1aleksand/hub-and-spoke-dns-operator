@@ -6,7 +6,7 @@ import logging
 import boto3
 from botocore.exceptions import ClientError
 
-from providers.base import DNSProvider
+from providers.base import DNSProvider, RecordType
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +24,10 @@ class AWSDNSProvider(DNSProvider):
     def provider_name(self) -> str:
         return "aws"
 
-    async def create_or_update_record(self, record_name: str, ip_address: str, ttl: int) -> None:
+    async def create_or_update_record(self, record_name: str, value: str, record_type: RecordType = RecordType.A, ttl: int = 300) -> None:
         name = self.extract_record_name(record_name, self._dns_zone)
         fqdn = f"{name}.{self._dns_zone}."
+        record_type_str = record_type.value
 
         def _upsert():
             self._client.change_resource_record_sets(
@@ -37,9 +38,9 @@ class AWSDNSProvider(DNSProvider):
                             "Action": "UPSERT",
                             "ResourceRecordSet": {
                                 "Name": fqdn,
-                                "Type": "A",
+                                "Type": record_type_str,
                                 "TTL": ttl,
-                                "ResourceRecords": [{"Value": ip_address}],
+                                "ResourceRecords": [{"Value": value}],
                             },
                         }
                     ]
@@ -48,24 +49,25 @@ class AWSDNSProvider(DNSProvider):
 
         try:
             await asyncio.to_thread(_upsert)
-            logger.info(f"[AWS] DNS record upserted: {name} -> {ip_address}")
+            logger.info(f"[AWS] DNS record upserted: {name} -> {value} ({record_type_str})")
         except ClientError as e:
             logger.error(f"[AWS] Error upserting DNS record {name}: {e}")
             raise
 
-    async def delete_record(self, record_name: str) -> None:
+    async def delete_record(self, record_name: str, record_type: RecordType = RecordType.A) -> None:
         name = self.extract_record_name(record_name, self._dns_zone)
         fqdn = f"{name}.{self._dns_zone}."
+        record_type_str = record_type.value
 
         def _delete():
             response = self._client.list_resource_record_sets(
                 HostedZoneId=self._hosted_zone_id,
                 StartRecordName=fqdn,
-                StartRecordType="A",
+                StartRecordType=record_type_str,
                 MaxItems="1",
             )
             record_sets = response.get("ResourceRecordSets", [])
-            matching = [r for r in record_sets if r["Name"] == fqdn and r["Type"] == "A"]
+            matching = [r for r in record_sets if r["Name"] == fqdn and r["Type"] == record_type_str]
 
             if not matching:
                 logger.warning(f"[AWS] DNS record not found for deletion: {name}")

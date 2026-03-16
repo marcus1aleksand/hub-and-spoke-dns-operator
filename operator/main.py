@@ -7,6 +7,9 @@ from kubernetes import client, config
 from aiohttp import web
 from prometheus_client import Counter, Histogram, Gauge, generate_latest
 
+from providers.base import RecordType
+from annotations import get_record_type, get_target_value
+
 # Configure logging to INFO level
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -103,19 +106,33 @@ operator_info.labels(
 
 async def create_or_update_dns_record(ingress, action):
     domain = ingress["spec"]["rules"][0]["host"]
+    annotations = ingress["metadata"].get("annotations", {})
     provider_name = dns_provider.provider_name
 
+    # Determine record type from annotation
+    record_type = get_record_type(annotations)
+    
+    # Get target value (IP or hostname)
+    target_value = get_target_value(ingress, annotations)
+    
+    # Auto-detect: if target looks like hostname and no explicit annotation, use CNAME
+    if record_type == RecordType.A and dns_provider.is_hostname(target_value):
+        record_type = RecordType.CNAME
+    
     # Check for custom IP annotation and ingressclass
     use_custom_ip = custom_ip_from_values and (
-        ingress["metadata"]["annotations"].get("kubernetes.io/ingress.class") != "nginx-internal"
+        annotations.get("kubernetes.io/ingress.class") != "nginx-internal"
         and ingress["spec"].get("ingressClassName") != "nginx-internal"
     )
-    ip = custom_ip_from_values if use_custom_ip else ingress["status"]["loadBalancer"]["ingress"][0]["ip"]
+    # Override target value if custom IP is configured (for A records only)
+    if use_custom_ip and record_type == RecordType.A:
+        target_value = custom_ip_from_values
+    
     ttl = int(os.environ.get("CUSTOM_TTL", 300))
 
     start_time = time.time()
     try:
-        await dns_provider.create_or_update_record(domain, ip, ttl)
+        await dns_provider.create_or_update_record(domain, target_value, record_type, ttl)
 
         duration = time.time() - start_time
         dns_operation_duration_seconds.labels(operation=action, provider=provider_name).observe(duration)
@@ -125,7 +142,8 @@ async def create_or_update_dns_record(ingress, action):
             dns_records_managed.inc()
 
         verb = 'created' if action == 'create' else 'updated'
-        logger.info(f"[{provider_name}] DNS record {verb}: {domain} -> {ip} ({duration:.3f}s)")
+        record_type_str = record_type.value
+        logger.info(f"[{provider_name}] DNS record {verb}: {domain} -> {target_value} ({record_type_str}) ({duration:.3f}s)")
 
     except Exception as e:
         duration = time.time() - start_time
@@ -139,18 +157,23 @@ async def create_or_update_dns_record(ingress, action):
 
 async def delete_dns_record(ingress):
     domain = ingress["spec"]["rules"][0]["host"]
+    annotations = ingress["metadata"].get("annotations", {})
     provider_name = dns_provider.provider_name
+    
+    # Get record type to delete (use same logic as create)
+    record_type = get_record_type(annotations)
 
     start_time = time.time()
     try:
-        await dns_provider.delete_record(domain)
+        await dns_provider.delete_record(domain, record_type)
 
         duration = time.time() - start_time
         dns_operation_duration_seconds.labels(operation='delete', provider=provider_name).observe(duration)
         dns_operations_total.labels(operation='delete', status='success', provider=provider_name).inc()
         dns_records_managed.dec()
 
-        logger.info(f"[{provider_name}] DNS record deleted: {domain} ({duration:.3f}s)")
+        record_type_str = record_type.value
+        logger.info(f"[{provider_name}] DNS record deleted: {domain} ({record_type_str}) ({duration:.3f}s)")
 
     except Exception as e:
         duration = time.time() - start_time
