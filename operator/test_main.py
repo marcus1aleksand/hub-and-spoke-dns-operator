@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock, AsyncMock
 import os
+from providers.base import RecordType
 
 # Mocked Environment Variables — Azure (default provider)
 os.environ["CLOUD_PROVIDER"] = "azure"
@@ -23,6 +24,7 @@ def mock_provider():
         mock.provider_name = "azure"
         mock.create_or_update_record = AsyncMock()
         mock.delete_record = AsyncMock()
+        mock.is_hostname = MagicMock(return_value=False)  # Default: treat as IP (not hostname)
         yield mock
 
 
@@ -37,16 +39,19 @@ async def test_create_or_update_dns_record(mock_provider):
     await main.create_or_update_dns_record(ingress, "create")
 
     mock_provider.create_or_update_record.assert_called_once_with(
-        "test.example.com", "1.2.3.4", 300
+        "test.example.com", "1.2.3.4", RecordType.A, 300
     )
 
 
 @pytest.mark.asyncio
 async def test_delete_dns_record(mock_provider):
-    ingress = {"spec": {"rules": [{"host": "test.example.com"}]}}
+    ingress = {
+        "spec": {"rules": [{"host": "test.example.com"}]},
+        "metadata": {"annotations": {}}
+    }
 
     await main.delete_dns_record(ingress)
-    mock_provider.delete_record.assert_called_once_with("test.example.com")
+    mock_provider.delete_record.assert_called_once_with("test.example.com", RecordType.A)
 
 
 @pytest.mark.asyncio
@@ -161,7 +166,7 @@ async def test_internal_ingress_uses_lb_ip(mock_provider):
     }
     await main.create_or_update_dns_record(ingress, "create")
     mock_provider.create_or_update_record.assert_called_once_with(
-        "internal.example.com", "10.0.0.1", 300
+        "internal.example.com", "10.0.0.1", RecordType.A, 300
     )
 
 
@@ -177,7 +182,7 @@ async def test_internal_ingress_annotation(mock_provider):
     }
     await main.create_or_update_dns_record(ingress, "create")
     mock_provider.create_or_update_record.assert_called_once_with(
-        "internal.example.com", "10.0.0.2", 300
+        "internal.example.com", "10.0.0.2", RecordType.A, 300
     )
 
 
@@ -198,7 +203,10 @@ async def test_create_dns_record_error_handling(mock_provider):
 async def test_delete_dns_record_error_handling(mock_provider):
     """Errors during DNS deletion should be caught and logged, not raised."""
     mock_provider.delete_record.side_effect = Exception("API error")
-    ingress = {"spec": {"rules": [{"host": "test.example.com"}]}}
+    ingress = {
+        "spec": {"rules": [{"host": "test.example.com"}]},
+        "metadata": {"annotations": {}}
+    }
     # Should not raise
     await main.delete_dns_record(ingress)
 
