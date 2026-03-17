@@ -24,3 +24,15 @@ rules:
       - "get"
       - "list"
       - "watch"
+  - apiGroups:
+      - "dns.example.com"
+    resources:
+      - "dnsrecords"
+    verbs:
+      - "get"
+      - "list"
+      - "watch"
+      - "create"
+      - "update"
+      - "patch"
+      - "delete"

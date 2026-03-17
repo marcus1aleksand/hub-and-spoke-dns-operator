@@ -6,6 +6,7 @@ import time
 from kubernetes import client, config
 from aiohttp import web
 from prometheus_client import Counter, Histogram, Gauge, generate_latest
+from controllers.gitops import GitOpsController, FluxIntegration, DNSRecordSpec, RecordType
 
 # Configure logging to INFO level
 logging.basicConfig(level=logging.INFO)
@@ -79,6 +80,9 @@ api_client = client.NetworkingV1Api()
 
 # Initialize cloud DNS provider
 dns_provider = create_dns_provider()
+
+# Initialize GitOps controller
+gitops_controller = GitOpsController(dns_provider)
 
 # Get DNS zone for metrics (provider-agnostic)
 dns_zone = (
@@ -173,6 +177,48 @@ async def ingress_event_handler(event, **kwargs):
         await create_or_update_dns_record(event["object"], "update")
     elif event["type"] == "DELETED":
         await delete_dns_record(event["object"])
+
+
+# =============================================================================
+# GITOPS DNS RECORD HANDLERS
+# =============================================================================
+
+@kopf.on.event("dns.example.com/v1alpha1", "DNSRecord")
+async def dnsrecord_event_handler(event, **kwargs):
+    """Handle DNSRecord custom resources for GitOps-based DNS management"""
+    
+    # Skip if not relevant event type
+    if event["type"] not in ["ADDED", "MODIFIED", "DELETED"]:
+        return
+    
+    try:
+        record = event["object"]
+        spec = record.get("spec", {})
+        
+        # Parse record specification
+        record_spec = DNSRecordSpec(
+            name=record["metadata"]["name"],
+            record_type=RecordType(spec.get("recordType", "A")),
+            value=spec.get("value", ""),
+            ttl=spec.get("ttl", 300),
+            priority=spec.get("priority"),
+            labels=spec.get("labels", {})
+        )
+        
+        # Validate the record
+        is_valid, error_msg = await gitops_controller.validate_record(record_spec)
+        if not is_valid:
+            logger.error(f"[GitOps] Invalid DNS record {record_spec.name}: {error_msg}")
+            return
+        
+        # Handle the event
+        if event["type"] == "DELETED":
+            await gitops_controller.delete(record_spec)
+        else:
+            await gitops_controller.reconcile(record_spec)
+            
+    except Exception as e:
+        logger.error(f"[GitOps] Error handling DNSRecord event: {e}")
 
 
 @kopf.on.startup()

@@ -92,3 +92,11 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 podAnnotations: {}
+
+# =============================================================================
+# GitOps / Flux Configuration
+# =============================================================================
+gitops:
+  # gitops.crd.create -- Create the DNSRecord CRD for GitOps-based DNS management
+  crd:
+    create: true
