@@ -111,14 +111,14 @@ async def create_or_update_dns_record(ingress, action):
 
     # Determine record type from annotation
     record_type = get_record_type(annotations)
-    
+
     # Get target value (IP or hostname)
     target_value = get_target_value(ingress, annotations)
-    
+
     # Auto-detect: if target looks like hostname and no explicit annotation, use CNAME
     if record_type == RecordType.A and dns_provider.is_hostname(target_value):
         record_type = RecordType.CNAME
-    
+
     # Check for custom IP annotation and ingressclass
     use_custom_ip = custom_ip_from_values and (
         annotations.get("kubernetes.io/ingress.class") != "nginx-internal"
@@ -127,7 +127,7 @@ async def create_or_update_dns_record(ingress, action):
     # Override target value if custom IP is configured (for A records only)
     if use_custom_ip and record_type == RecordType.A:
         target_value = custom_ip_from_values
-    
+
     ttl = int(os.environ.get("CUSTOM_TTL", 300))
 
     start_time = time.time()
@@ -143,7 +143,7 @@ async def create_or_update_dns_record(ingress, action):
 
         verb = 'created' if action == 'create' else 'updated'
         record_type_str = record_type.value
-        logger.info(f"[{provider_name}] DNS record {verb}: {domain} -> {target_value} ({record_type_str}) ({duration:.3f}s)")
+        logger.info(f"[{provider_name}] DNS {verb} {domain} -> {target_value} ({record_type_str})")
 
     except Exception as e:
         duration = time.time() - start_time
@@ -159,7 +159,7 @@ async def delete_dns_record(ingress):
     domain = ingress["spec"]["rules"][0]["host"]
     annotations = ingress["metadata"].get("annotations", {})
     provider_name = dns_provider.provider_name
-    
+
     # Get record type to delete (use same logic as create)
     record_type = get_record_type(annotations)
 
@@ -239,7 +239,7 @@ app.router.add_get("/metrics", metrics_handler)
 async def main():
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, "0.0.0.0", 8080)
+    site = web.TCPSite(runner, "0.0.0.0", 8080)  # nosec B104
     await site.start()
 
     kopf_operator = kopf.operator()

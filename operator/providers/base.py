@@ -33,7 +33,9 @@ class DNSProvider(ABC):
         ...
 
     @abstractmethod
-    async def create_or_update_record(self, record_name: str, value: str, record_type: RecordType = RecordType.A, ttl: int = 300) -> None:
+    async def create_or_update_record(
+        self, record_name: str, value: str, record_type: RecordType = RecordType.A, ttl: int = 300
+    ) -> None:
         """Create or update a DNS record (A or CNAME)."""
         ...
 
@@ -51,7 +53,7 @@ class DNSProvider(ABC):
 
     def is_hostname(self, value: str) -> bool:
         """Check if value is a hostname (not an IP address).
-        
+
         Returns True if the value looks like a hostname (contains letters
         and is not a simple IPv4 address).
         """

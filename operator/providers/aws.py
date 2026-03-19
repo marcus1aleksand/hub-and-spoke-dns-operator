@@ -24,7 +24,9 @@ class AWSDNSProvider(DNSProvider):
     def provider_name(self) -> str:
         return "aws"
 
-    async def create_or_update_record(self, record_name: str, value: str, record_type: RecordType = RecordType.A, ttl: int = 300) -> None:
+    async def create_or_update_record(
+        self, record_name: str, value: str, record_type: RecordType = RecordType.A, ttl: int = 300
+    ) -> None:
         name = self.extract_record_name(record_name, self._dns_zone)
         fqdn = f"{name}.{self._dns_zone}."
         record_type_str = record_type.value
