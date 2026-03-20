@@ -92,7 +92,7 @@ dns_zone = (
 
 custom_ip_from_values = os.environ.get("CUSTOM_IP", None)
 
-OPERATOR_VERSION = os.environ.get("OPERATOR_VERSION", "0.2.1")
+OPERATOR_VERSION = os.environ.get("OPERATOR_VERSION", "0.4.2")
 operator_info.labels(
     dns_zone=dns_zone,
     provider=dns_provider.provider_name,
