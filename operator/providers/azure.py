@@ -57,7 +57,7 @@ class AzureDNSProvider(DNSProvider):
             await asyncio.to_thread(_upsert)
             logger.info(f"[Azure] DNS record upserted: {name} -> {value} ({record_type_str})")
         except HttpResponseError as e:
-            logger.error(f"[Azure] Error upserting DNS record {name}: {e.message}")
+            logger.error(f"[Azure] Error upserting DNS record {name}: {e.reason}")
             raise
 
     async def delete_record(self, record_name: str, record_type: RecordType = RecordType.A) -> None:
@@ -73,5 +73,5 @@ class AzureDNSProvider(DNSProvider):
             await asyncio.to_thread(_delete)
             logger.info(f"[Azure] DNS record deleted: {name} ({record_type_str})")
         except HttpResponseError as e:
-            logger.error(f"[Azure] Error deleting DNS record {name}: {e.message}")
+            logger.error(f"[Azure] Error deleting DNS record {name}: {e.reason}")
             raise

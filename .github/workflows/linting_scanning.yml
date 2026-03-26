@@ -75,6 +75,6 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Checkov Scan
-        uses: bridgecrewio/checkov-action@v12
+        uses: bridgecrewio/checkov-action@v13
         with:
           config_file: checkov.yaml
