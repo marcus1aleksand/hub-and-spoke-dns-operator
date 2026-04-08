@@ -19,7 +19,7 @@ jobs:
 
     - name: Update Semantic Version
       id: semantic_version
-      uses: paulhatch/semantic-version@v6.0.1
+      uses: paulhatch/semantic-version@v6.0.2
       with:
         tag_prefix: ""
         major_pattern: "major:"
