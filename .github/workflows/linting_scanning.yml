@@ -65,7 +65,7 @@ jobs:
 
       - name: Run bandit (Security Scan)
         run: |
-          bandit -r ./operator/main.py
+          bandit -r ./operator/
 
   scan-helm:
     runs-on: ubuntu-latest
