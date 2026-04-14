@@ -75,7 +75,7 @@ jobs:
         helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/helm-charts
 
     - name: Update Image Version in the related HelmChart values.yaml
-      uses: fjogeleit/yaml-update-action@main
+      uses: fjogeleit/yaml-update-action@v0.12.2
       with:
         valueFile: 'charts/Chart.yaml'
         repository: 'marcus1aleksand/hub-and-spoke-dns-operator'
