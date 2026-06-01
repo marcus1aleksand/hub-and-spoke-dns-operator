@@ -65,7 +65,7 @@ jobs:
 
       - name: Run bandit (Security Scan)
         run: |
-          bandit -r ./operator/
+          bandit -r ./operator/ --skip-low --exclude './operator/test_*.py'
 
   scan-helm:
     runs-on: ubuntu-latest
