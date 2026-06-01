@@ -8,7 +8,7 @@ azure-identity~=1.25.0
 azure-mgmt-dns~=9.0.0
 
 # GCP DNS provider
-google-cloud-dns~=0.36.0
+google-cloud-dns~=0.37.0
 
 # AWS DNS provider (Route53)
-boto3~=1.42.63
+boto3~=1.43.19
