@@ -1,6 +1,6 @@
 kopf~=1.44.5
 kubernetes~=36.0.2
-aiohttp~=3.13.3
+aiohttp~=3.14.0
 prometheus_client~=0.24.0
 
 # Azure DNS provider
