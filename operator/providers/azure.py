@@ -49,7 +49,7 @@ class AzureDNSProvider(DNSProvider):
                     self._resource_group,
                     self._dns_zone,
                     name,
-                    "A",
+                    record_type_str,
                     {"ttl": ttl, "arecords": [{"ipv4_address": value}]},
                 )
 

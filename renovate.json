@@ -17,17 +17,5 @@
       "additionalBranchPrefix": "{{packageFileDir}}-",
       "groupName": "all-updates"
     }
-  ],
-  "helmv3": {
-    "enabled": true
-  },
-  "dockerfile": {
-    "enabled": true
-  },
-  "pip_requirements": {
-    "enabled": true
-  },
-  "poetry": {
-    "enabled": true
-  }
+  ]
 }
