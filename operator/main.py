@@ -244,7 +244,12 @@ async def main():
 
     kopf_operator = kopf.operator()
 
-    await asyncio.gather(runner.cleanup(), kopf_operator)
+    # Run the operator and only tear the HTTP server down when it stops.
+    # Passing runner.cleanup() to gather() would shut the server down immediately.
+    try:
+        await kopf_operator
+    finally:
+        await runner.cleanup()
 
 
 if __name__ == "__main__":
