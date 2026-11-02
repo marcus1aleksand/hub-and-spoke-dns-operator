@@ -232,3 +232,48 @@ def test_configure_handler():
     assert mock_settings.posting.level == 30  # logging.WARNING
     assert mock_settings.watching.connect_timeout == 60
     assert mock_settings.watching.server_timeout == 60
+
+
+@pytest.mark.asyncio
+async def test_create_cname_record_from_target_hostname_annotation(mock_provider):
+    """A hostname target has to create a CNAME record, not an A record."""
+    ingress = {
+        "spec": {"rules": [{"host": "app.example.com"}], "ingressClassName": "nginx"},
+        "metadata": {"annotations": {"hub-dns-operator.io/target-hostname": "backend.example.com"}},
+    }
+
+    await main.create_or_update_dns_record(ingress, "create")
+
+    mock_provider.create_or_update_record.assert_called_once_with(
+        "app.example.com", "backend.example.com", RecordType.CNAME, 300
+    )
+
+
+@pytest.mark.asyncio
+async def test_delete_dns_record_removes_cname_for_hostname_target(mock_provider):
+    """The delete path must use the same record type as the create path.
+
+    Otherwise the CNAME created from the target-hostname annotation is deleted
+    as an A record and stays behind in the DNS zone.
+    """
+    ingress = {
+        "spec": {"rules": [{"host": "app.example.com"}]},
+        "metadata": {"annotations": {"hub-dns-operator.io/target-hostname": "backend.example.com"}},
+    }
+
+    await main.delete_dns_record(ingress)
+
+    mock_provider.delete_record.assert_called_once_with("app.example.com", RecordType.CNAME)
+
+
+@pytest.mark.asyncio
+async def test_delete_dns_record_removes_cname_for_explicit_annotation(mock_provider):
+    """An explicit record-type: CNAME annotation is honoured on delete."""
+    ingress = {
+        "spec": {"rules": [{"host": "app.example.com"}]},
+        "metadata": {"annotations": {"hub-dns-operator.io/record-type": "CNAME"}},
+    }
+
+    await main.delete_dns_record(ingress)
+
+    mock_provider.delete_record.assert_called_once_with("app.example.com", RecordType.CNAME)

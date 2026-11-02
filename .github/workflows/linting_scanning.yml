@@ -48,6 +48,10 @@ jobs:
         working-directory: charts
         run: |
           helm lint .
+
+      - name: Run helm render value tests
+        run: |
+          bash scripts/helm-render-test.sh
     
   scan-python:
     runs-on: ubuntu-latest

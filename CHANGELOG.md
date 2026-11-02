@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Delete path now resolves the same record type as the create path, so a CNAME created from the hub-dns-operator.io/target-hostname annotation is no longer left behind in the DNS zone
+- Helm chart: replicaCount is honoured instead of always rendering replicas: 1
+- Helm chart: deployment.automountServiceAccountToken set to false is honoured instead of being silently rendered as true
+- IPv6 load balancer addresses are no longer mistaken for hostnames
+- Stale OPERATOR_VERSION fallback aligned with the current chart version
+
+### Added
+- scripts/helm-render-test.sh regression test for Helm value handling, wired into the Lint and Security Scan workflow
+
+
 ## [0.4.9] - 2026-06-01
 
 ### Changed

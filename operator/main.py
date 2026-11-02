@@ -8,7 +8,11 @@ from aiohttp import web
 from prometheus_client import Counter, Histogram, Gauge, generate_latest
 
 from providers.base import RecordType
-from annotations import get_record_type, get_target_value
+from annotations import (
+    ANNOTATION_TARGET_HOSTNAME,
+    get_target_value,
+    resolve_record_type,
+)
 
 # Configure logging to INFO level
 logging.basicConfig(level=logging.INFO)
@@ -92,7 +96,8 @@ dns_zone = (
 
 custom_ip_from_values = os.environ.get("CUSTOM_IP", None)
 
-OPERATOR_VERSION = os.environ.get("OPERATOR_VERSION", "0.4.5")
+# Fallback only: the Helm chart always sets OPERATOR_VERSION from Chart.AppVersion.
+OPERATOR_VERSION = os.environ.get("OPERATOR_VERSION", "0.4.11")
 operator_info.labels(
     dns_zone=dns_zone,
     provider=dns_provider.provider_name,
@@ -109,15 +114,12 @@ async def create_or_update_dns_record(ingress, action):
     annotations = ingress["metadata"].get("annotations", {})
     provider_name = dns_provider.provider_name
 
-    # Determine record type from annotation
-    record_type = get_record_type(annotations)
-
     # Get target value (IP or hostname)
     target_value = get_target_value(ingress, annotations)
 
-    # Auto-detect: if target looks like hostname and no explicit annotation, use CNAME
-    if record_type == RecordType.A and dns_provider.is_hostname(target_value):
-        record_type = RecordType.CNAME
+    # Determine the effective record type: an explicit annotation wins,
+    # otherwise a hostname target means the record has to be a CNAME.
+    record_type = resolve_record_type(annotations, target_value)
 
     # Check for custom IP annotation and ingressclass
     use_custom_ip = custom_ip_from_values and (
@@ -160,8 +162,12 @@ async def delete_dns_record(ingress):
     annotations = ingress["metadata"].get("annotations", {})
     provider_name = dns_provider.provider_name
 
-    # Get record type to delete (use same logic as create)
-    record_type = get_record_type(annotations)
+    # Get the record type to delete. The create path auto-detects a CNAME from
+    # the target-hostname annotation, so the delete path has to resolve the same
+    # type; otherwise the CNAME would be left behind in the DNS zone.
+    record_type = resolve_record_type(
+        annotations, annotations.get(ANNOTATION_TARGET_HOSTNAME, "")
+    )
 
     start_time = time.time()
     try:
