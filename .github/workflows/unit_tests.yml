@@ -27,7 +27,7 @@ jobs:
       - name: Run tests with coverage
         working-directory: ./operator
         run: |
-          pytest test_main.py test_providers.py \
+          pytest \
             --cov=. \
             --cov-report=term-missing \
             --cov-report=xml:coverage.xml \

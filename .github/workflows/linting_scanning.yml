@@ -9,6 +9,9 @@ on:
       - synchronize 
       - reopened
 
+permissions:
+  contents: read
+
 jobs:
   lint-python:
     runs-on: ubuntu-latest
@@ -24,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8
+          pip install flake8==7.5.0
 
       - name: Run flake8 (Python Linting)
         run: |
@@ -39,7 +42,7 @@ jobs:
 
       - name: Set up Helm
         run: |
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          curl -fsSL https://raw.githubusercontent.com/helm/helm/v3.19.0/scripts/get-helm-3 | bash
 
       - name: Run helm lint
         working-directory: charts
@@ -61,11 +64,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install bandit
+          pip install bandit==1.9.4
 
       - name: Run bandit (Security Scan)
         run: |
-          bandit -r ./operator/ -x './operator/test_*.py' -f screen || true
+          bandit -r ./operator/ -x './operator/test_*.py' -f screen
 
   scan-helm:
     runs-on: ubuntu-latest

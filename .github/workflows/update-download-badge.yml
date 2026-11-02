@@ -20,11 +20,16 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Try the packages versions API first
+          # Sum the download counts of every published version. gh applies the
+          # jq filter to each page separately, so the per-page numbers are
+          # summed here. Summing inside jq would leave TOTAL multi-line and
+          # the integer comparisons below would fail.
           TOTAL=$(gh api \
             '/users/${{ github.repository_owner }}/packages/container/hub-and-spoke-dns-operator/versions' \
             --paginate \
-            --jq 'map(.metadata.download_count // 0) | add' 2>/dev/null || echo "0")
+            --jq '.[] | (.metadata.download_count // 0)' 2>/dev/null \
+            | awk '{ sum += $1 } END { print sum + 0 }')
+          TOTAL=${TOTAL:-0}
 
           # Fallback: scrape the package page
           if [ "$TOTAL" = "0" ] || [ "$TOTAL" = "null" ]; then
