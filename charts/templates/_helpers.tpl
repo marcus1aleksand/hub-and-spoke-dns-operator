@@ -60,3 +60,32 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Replica count for the deployment.
+The "default" function cannot be used here: it treats 0 as an empty value, so
+an explicit replicaCount of 0 would silently be replaced by the fallback.
+*/}}
+{{- define "dns-operator.replicaCount" -}}
+{{- if kindIs "invalid" .Values.replicaCount -}}
+1
+{{- else -}}
+{{- .Values.replicaCount -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Whether the service account token should be automounted.
+The "default" function cannot be used here either: false is an empty value for
+it, so an explicit automountServiceAccountToken: false would silently be
+turned back into true.
+*/}}
+{{- define "dns-operator.automountServiceAccountToken" -}}
+{{- $deployment := .Values.deployment | default dict -}}
+{{- $value := index $deployment "automountServiceAccountToken" -}}
+{{- if kindIs "bool" $value -}}
+{{- $value -}}
+{{- else -}}
+true
+{{- end -}}
+{{- end -}}

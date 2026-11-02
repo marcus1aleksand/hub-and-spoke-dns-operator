@@ -1,7 +1,7 @@
 """Annotation parsing utilities for DNS record management."""
 
 import os
-from providers.base import RecordType
+from providers.base import RecordType, looks_like_hostname
 
 # Default target source - can be "loadbalancer" (default) or "annotation"
 DEFAULT_TARGET_SOURCE = os.environ.get("DEFAULT_TARGET_SOURCE", "loadbalancer")
@@ -23,6 +23,27 @@ def get_record_type(annotations: dict) -> RecordType:
     if explicit == "CNAME":
         return RecordType.CNAME
     # Default to A record (auto-detect happens based on target value)
+    return RecordType.A
+
+
+def resolve_record_type(annotations: dict, target_value: str) -> RecordType:
+    """Resolve the effective record type for an ingress.
+
+    An explicit "hub-dns-operator.io/record-type: CNAME" annotation always
+    wins. Otherwise the type is auto-detected from the target value: a
+    hostname target can only be produced by the target-hostname annotation
+    (the load balancer path always yields an IP address), so a hostname
+    target means the record has to be a CNAME.
+
+    The create and the delete code path both use this helper so that a record
+    is always removed with the same type it was created with. Without it a
+    CNAME created from the target-hostname annotation was deleted as an A
+    record, which left the CNAME behind in the DNS zone.
+    """
+    if get_record_type(annotations) == RecordType.CNAME:
+        return RecordType.CNAME
+    if looks_like_hostname(target_value):
+        return RecordType.CNAME
     return RecordType.A
 
 

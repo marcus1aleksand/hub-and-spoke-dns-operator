@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "dns-operator.labels" . | nindent 4 }}
 spec:
-  replicas: {{ default .Values.replicaCount 1 }}
+  replicas: {{ include "dns-operator.replicaCount" . }}
   selector:
     matchLabels:
       {{- include "dns-operator.selectorLabels" . | nindent 6 }}
@@ -110,7 +110,7 @@ spec:
       nodeSelector: {{- toYaml .Values.nodeSelector | nindent 8 }}
       tolerations: {{- toYaml .Values.tolerations | nindent 8 }}
       affinity: {{- toYaml .Values.affinity | nindent 8 }}
-      automountServiceAccountToken: {{ default .Values.deployment.automountServiceAccountToken true }}
+      automountServiceAccountToken: {{ include "dns-operator.automountServiceAccountToken" . }}
       securityContext:
         fsGroup: 1000
       volumes:

@@ -264,3 +264,34 @@ class TestAnnotationParsing:
         ingress = {}
         with pytest.raises(ValueError, match="No target value found"):
             get_target_value(ingress, {})
+
+
+class TestResolveRecordType:
+    """Tests for the shared record type resolution used by create and delete."""
+
+    def test_explicit_cname_annotation_wins(self):
+        from annotations import resolve_record_type
+
+        annotations = {"hub-dns-operator.io/record-type": "CNAME"}
+        assert resolve_record_type(annotations, "1.2.3.4") == RecordType.CNAME
+
+    def test_hostname_target_resolves_to_cname(self):
+        from annotations import resolve_record_type
+
+        annotations = {"hub-dns-operator.io/target-hostname": "backend.example.com"}
+        assert resolve_record_type(annotations, "backend.example.com") == RecordType.CNAME
+
+    def test_ip_target_resolves_to_a_record(self):
+        from annotations import resolve_record_type
+
+        assert resolve_record_type({}, "1.2.3.4") == RecordType.A
+
+    def test_ipv6_target_resolves_to_a_record(self):
+        from annotations import resolve_record_type
+
+        assert resolve_record_type({}, "2001:db8::1") == RecordType.A
+
+    def test_empty_target_resolves_to_a_record(self):
+        from annotations import resolve_record_type
+
+        assert resolve_record_type({}, "") == RecordType.A
